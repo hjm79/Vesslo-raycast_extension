@@ -13,8 +13,8 @@ type ExtensionPreferences = {}
 declare type Preferences = ExtensionPreferences
 
 declare namespace Preferences {
-  /** Preferences accessible in the `search-apps` command */
-  export type SearchApps = ExtensionPreferences & {}
+  /** Preferences accessible in the `index` command */
+  export type Index = ExtensionPreferences & {}
   /** Preferences accessible in the `updates` command */
   export type Updates = ExtensionPreferences & {}
   /** Preferences accessible in the `bulk-homebrew-update` command */
@@ -24,8 +24,8 @@ declare namespace Preferences {
 }
 
 declare namespace Arguments {
-  /** Arguments passed to the `search-apps` command */
-  export type SearchApps = {}
+  /** Arguments passed to the `index` command */
+  export type Index = {}
   /** Arguments passed to the `updates` command */
   export type Updates = {}
   /** Arguments passed to the `bulk-homebrew-update` command */
