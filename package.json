@@ -12,17 +12,10 @@
   ],
   "commands": [
     {
-      "name": "search-apps",
-      "title": "Search Apps",
+      "name": "bulk-homebrew-update",
+      "title": "Bulk Homebrew Update",
       "subtitle": "Vesslo",
-      "description": "Search apps by name, developer, tags, or memo",
-      "mode": "view"
-    },
-    {
-      "name": "updates",
-      "title": "View Updates",
-      "subtitle": "Vesslo",
-      "description": "View apps with available updates",
+      "description": "Update all Homebrew cask apps at once",
       "mode": "view"
     },
     {
@@ -33,10 +26,17 @@
       "mode": "view"
     },
     {
-      "name": "bulk-homebrew-update",
-      "title": "Bulk Homebrew Update",
+      "name": "updates",
+      "title": "View Updates",
       "subtitle": "Vesslo",
-      "description": "Update all Homebrew cask apps at once",
+      "description": "View apps with available updates",
+      "mode": "view"
+    },
+    {
+      "name": "index",
+      "title": "Search Apps",
+      "subtitle": "Vesslo",
+      "description": "Search apps by name, developer, tags, or memo",
       "mode": "view"
     }
   ],
