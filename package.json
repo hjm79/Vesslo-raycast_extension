@@ -1,42 +1,38 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "vesslo",
+  "name": "vesslo-app",
   "title": "Vesslo",
   "description": "Search and manage apps from Vesslo",
   "icon": "extension-icon.png",
   "author": "hjm79",
   "license": "MIT",
-  "categories": [
-    "Applications",
-    "Productivity"
-  ],
   "commands": [
     {
-      "name": "browse-by-tag",
-      "title": "Browse by Tag",
+      "name": "a-search",
+      "title": "Search Apps",
       "subtitle": "Vesslo",
-      "description": "View apps grouped by tags",
+      "description": "Search apps by name, developer, tags, or memo",
       "mode": "view"
     },
     {
-      "name": "bulk-homebrew-update",
-      "title": "Bulk Homebrew Update",
-      "subtitle": "Vesslo",
-      "description": "Update all Homebrew cask apps at once",
-      "mode": "view"
-    },
-    {
-      "name": "updates",
+      "name": "b-updates",
       "title": "View Updates",
       "subtitle": "Vesslo",
       "description": "View apps with available updates",
       "mode": "view"
     },
     {
-      "name": "search-apps",
-      "title": "Search Apps",
+      "name": "c-browse",
+      "title": "Browse by Tag",
       "subtitle": "Vesslo",
-      "description": "Search apps by name, developer, tags, or memo",
+      "description": "View apps grouped by tags",
+      "mode": "view"
+    },
+    {
+      "name": "d-bulk",
+      "title": "Bulk Homebrew Update",
+      "subtitle": "Vesslo",
+      "description": "Update all Homebrew cask apps at once",
       "mode": "view"
     }
   ],
