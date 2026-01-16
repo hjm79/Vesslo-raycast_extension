@@ -12,7 +12,7 @@
   ],
   "commands": [
     {
-      "name": "index",
+      "name": "search-apps",
       "title": "Search Apps",
       "subtitle": "Vesslo",
       "description": "Search apps by name, developer, tags, or memo",
