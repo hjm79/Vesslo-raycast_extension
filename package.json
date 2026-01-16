@@ -12,17 +12,10 @@
   ],
   "commands": [
     {
-      "name": "search-apps",
-      "title": "Search Apps",
+      "name": "browse-by-tag",
+      "title": "Browse by Tag",
       "subtitle": "Vesslo",
-      "description": "Search apps by name, developer, tags, or memo",
-      "mode": "view"
-    },
-    {
-      "name": "updates",
-      "title": "View Updates",
-      "subtitle": "Vesslo",
-      "description": "View apps with available updates",
+      "description": "View apps grouped by tags",
       "mode": "view"
     },
     {
@@ -33,10 +26,17 @@
       "mode": "view"
     },
     {
-      "name": "browse-by-tag",
-      "title": "Browse by Tag",
+      "name": "updates",
+      "title": "View Updates",
       "subtitle": "Vesslo",
-      "description": "View apps grouped by tags",
+      "description": "View apps with available updates",
+      "mode": "view"
+    },
+    {
+      "name": "search-apps",
+      "title": "Search Apps",
+      "subtitle": "Vesslo",
+      "description": "Search apps by name, developer, tags, or memo",
       "mode": "view"
     }
   ],
