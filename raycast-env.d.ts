@@ -13,24 +13,24 @@ type ExtensionPreferences = {}
 declare type Preferences = ExtensionPreferences
 
 declare namespace Preferences {
-  /** Preferences accessible in the `a-search` command */
-  export type ASearch = ExtensionPreferences & {}
-  /** Preferences accessible in the `b-updates` command */
-  export type BUpdates = ExtensionPreferences & {}
-  /** Preferences accessible in the `c-browse` command */
-  export type CBrowse = ExtensionPreferences & {}
-  /** Preferences accessible in the `d-bulk` command */
-  export type DBulk = ExtensionPreferences & {}
+  /** Preferences accessible in the `search-apps` command */
+  export type SearchApps = ExtensionPreferences & {}
+  /** Preferences accessible in the `updates` command */
+  export type Updates = ExtensionPreferences & {}
+  /** Preferences accessible in the `bulk-homebrew-update` command */
+  export type BulkHomebrewUpdate = ExtensionPreferences & {}
+  /** Preferences accessible in the `browse-by-tag` command */
+  export type BrowseByTag = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
-  /** Arguments passed to the `a-search` command */
-  export type ASearch = {}
-  /** Arguments passed to the `b-updates` command */
-  export type BUpdates = {}
-  /** Arguments passed to the `c-browse` command */
-  export type CBrowse = {}
-  /** Arguments passed to the `d-bulk` command */
-  export type DBulk = {}
+  /** Arguments passed to the `search-apps` command */
+  export type SearchApps = {}
+  /** Arguments passed to the `updates` command */
+  export type Updates = {}
+  /** Arguments passed to the `bulk-homebrew-update` command */
+  export type BulkHomebrewUpdate = {}
+  /** Arguments passed to the `browse-by-tag` command */
+  export type BrowseByTag = {}
 }
 

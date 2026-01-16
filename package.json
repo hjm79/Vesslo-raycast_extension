@@ -8,31 +8,31 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "a-search",
+      "name": "search-apps",
       "title": "Search Apps",
       "subtitle": "Vesslo",
       "description": "Search apps by name, developer, tags, or memo",
       "mode": "view"
     },
     {
-      "name": "b-updates",
+      "name": "updates",
       "title": "View Updates",
       "subtitle": "Vesslo",
       "description": "View apps with available updates",
       "mode": "view"
     },
     {
-      "name": "c-browse",
-      "title": "Browse by Tag",
-      "subtitle": "Vesslo",
-      "description": "View apps grouped by tags",
-      "mode": "view"
-    },
-    {
-      "name": "d-bulk",
+      "name": "bulk-homebrew-update",
       "title": "Bulk Homebrew Update",
       "subtitle": "Vesslo",
       "description": "Update all Homebrew cask apps at once",
+      "mode": "view"
+    },
+    {
+      "name": "browse-by-tag",
+      "title": "Browse by Tag",
+      "subtitle": "Vesslo",
+      "description": "View apps grouped by tags",
       "mode": "view"
     }
   ],
