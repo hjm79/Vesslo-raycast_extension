@@ -17,10 +17,10 @@ declare namespace Preferences {
   export type Index = ExtensionPreferences & {}
   /** Preferences accessible in the `updates` command */
   export type Updates = ExtensionPreferences & {}
-  /** Preferences accessible in the `bulk-homebrew-update` command */
-  export type BulkHomebrewUpdate = ExtensionPreferences & {}
   /** Preferences accessible in the `browse-by-tag` command */
   export type BrowseByTag = ExtensionPreferences & {}
+  /** Preferences accessible in the `bulk-homebrew-update` command */
+  export type BulkHomebrewUpdate = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
@@ -28,9 +28,9 @@ declare namespace Arguments {
   export type Index = {}
   /** Arguments passed to the `updates` command */
   export type Updates = {}
-  /** Arguments passed to the `bulk-homebrew-update` command */
-  export type BulkHomebrewUpdate = {}
   /** Arguments passed to the `browse-by-tag` command */
   export type BrowseByTag = {}
+  /** Arguments passed to the `bulk-homebrew-update` command */
+  export type BulkHomebrewUpdate = {}
 }
 

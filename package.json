@@ -26,17 +26,17 @@
       "mode": "view"
     },
     {
-      "name": "bulk-homebrew-update",
-      "title": "Bulk Homebrew Update",
-      "subtitle": "Vesslo",
-      "description": "Update all Homebrew cask apps at once",
-      "mode": "view"
-    },
-    {
       "name": "browse-by-tag",
       "title": "Browse by Tag",
       "subtitle": "Vesslo",
       "description": "View apps grouped by tags",
+      "mode": "view"
+    },
+    {
+      "name": "bulk-homebrew-update",
+      "title": "Bulk Homebrew Update",
+      "subtitle": "Vesslo",
+      "description": "Update all Homebrew cask apps at once",
       "mode": "view"
     }
   ],
