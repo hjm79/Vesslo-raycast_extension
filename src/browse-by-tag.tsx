@@ -5,13 +5,12 @@ import {
   List,
   showToast,
   Toast,
-  open,
   Color,
-  closeMainWindow,
 } from "@raycast/api";
 import { useState, useMemo, useEffect } from "react";
 import { loadVessloData } from "./utils/data";
 import { VessloApp, VessloData } from "./types";
+import { SharedAppListItem } from "./components/SharedAppListItem";
 
 export default function BrowseByTag() {
   const [data, setData] = useState<VessloData | null>(null);
@@ -69,53 +68,11 @@ export default function BrowseByTag() {
       >
         <List.Section title={`#${selectedTag} (${selectedApps.length} apps)`}>
           {selectedApps.map((app) => (
-            <List.Item
+            <SharedAppListItem
               key={app.id}
-              icon={
-                app.icon
-                  ? { source: `data:image/png;base64,${app.icon}` }
-                  : Icon.AppWindow
-              }
-              title={app.name}
-              subtitle={app.developer ?? ""}
-              accessories={[
-                ...(app.targetVersion
-                  ? [{ tag: { value: "UPDATE", color: Color.Green } }]
-                  : []),
-                ...app.sources.map((s) => ({
-                  tag: {
-                    value: s,
-                    color:
-                      s === "Brew"
-                        ? Color.Orange
-                        : s === "App Store"
-                          ? Color.Blue
-                          : Color.SecondaryText,
-                  },
-                })),
-              ]}
-              actions={
-                <ActionPanel>
-                  <Action.Open title="Open App" target={app.path} />
-                  <Action.ShowInFinder path={app.path} />
-                  <Action
-                    title="Open in Vesslo"
-                    icon={Icon.Link}
-                    onAction={async () => {
-                      if (app.bundleId) {
-                        await closeMainWindow();
-                        open(`vesslo://app/${app.bundleId}`);
-                      }
-                    }}
-                  />
-                  <Action
-                    title="Back to Tags"
-                    icon={Icon.ArrowLeft}
-                    shortcut={{ modifiers: ["cmd"], key: "[" }}
-                    onAction={() => setSelectedTag(null)}
-                  />
-                </ActionPanel>
-              }
+              app={app}
+              showBackToTags
+              onBackToTags={() => setSelectedTag(null)}
             />
           ))}
         </List.Section>

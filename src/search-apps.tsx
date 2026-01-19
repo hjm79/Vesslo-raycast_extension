@@ -1,16 +1,8 @@
-import {
-  Action,
-  ActionPanel,
-  Icon,
-  List,
-  showToast,
-  Toast,
-  open,
-  Color,
-} from "@raycast/api";
+import { Icon, List, showToast, Toast } from "@raycast/api";
 import { useState, useMemo, useEffect } from "react";
 import { loadVessloData } from "./utils/data";
 import { VessloApp, VessloData } from "./types";
+import { SharedAppListItem } from "./components/SharedAppListItem";
 
 interface SearchResult {
   app: VessloApp;
@@ -91,141 +83,14 @@ export default function SearchApps() {
         />
       ) : (
         searchResults.map((result) => (
-          <AppListItem
+          <SharedAppListItem
             key={result.app.id}
             app={result.app}
             matchedFields={result.matchedFields}
+            onTagClick={(tag) => setSearchText(tag)}
           />
         ))
       )}
     </List>
-  );
-}
-
-function AppListItem({
-  app,
-  matchedFields,
-}: {
-  app: VessloApp;
-  matchedFields: string[];
-}) {
-  const subtitle = [app.version, app.developer, ...app.tags.map((t) => `#${t}`)]
-    .filter(Boolean)
-    .join(" • ");
-
-  const accessories: List.Item.Accessory[] = [];
-
-  // Show matched field indicators (only when searching)
-  if (matchedFields.length > 0) {
-    matchedFields.forEach((field) => {
-      let icon: Icon;
-      let color: Color;
-      let tooltip: string;
-
-      switch (field) {
-        case "developer":
-          icon = Icon.Person;
-          color = Color.Blue;
-          tooltip = "Matched: Developer";
-          break;
-        case "memo":
-          icon = Icon.Document;
-          color = Color.Orange;
-          tooltip = "Matched: Memo";
-          break;
-        case "tag":
-          icon = Icon.Tag;
-          color = Color.Purple;
-          tooltip = "Matched: Tag";
-          break;
-        default:
-          icon = Icon.Circle;
-          color = Color.SecondaryText;
-          tooltip = "Matched";
-      }
-
-      accessories.push({ icon: { source: icon, tintColor: color }, tooltip });
-    });
-  }
-
-  // Update badge
-  if (app.targetVersion) {
-    accessories.push({ tag: { value: "UPDATE", color: Color.Green } });
-  }
-
-  // Source badges (use actual rawValue: "Brew", "Sparkle", "App Store")
-  app.sources.forEach((source) => {
-    const color =
-      source === "Brew"
-        ? Color.Orange
-        : source === "App Store"
-          ? Color.Blue
-          : source === "Sparkle"
-            ? Color.Green
-            : Color.SecondaryText;
-    accessories.push({ tag: { value: source, color } });
-  });
-
-  // Create icon from base64 or use default
-  const icon = app.icon
-    ? { source: `data:image/png;base64,${app.icon}` }
-    : Icon.AppWindow;
-
-  return (
-    <List.Item
-      icon={icon}
-      title={app.name}
-      subtitle={subtitle}
-      accessories={accessories}
-      actions={
-        <ActionPanel>
-          <ActionPanel.Section>
-            <Action.Open title="Open App" target={app.path} />
-            <Action.ShowInFinder path={app.path} />
-          </ActionPanel.Section>
-          <ActionPanel.Section>
-            <Action
-              title="Open in Vesslo"
-              icon={Icon.Link}
-              onAction={() => {
-                if (app.bundleId) {
-                  open(`vesslo://app/${app.bundleId}`);
-                }
-              }}
-            />
-            {app.bundleId && (
-              <Action.CopyToClipboard
-                title="Copy Bundle Id"
-                content={app.bundleId}
-              />
-            )}
-          </ActionPanel.Section>
-          {app.targetVersion && (
-            <ActionPanel.Section title="Update">
-              {app.sources.includes("Brew") && app.homebrewCask && (
-                <Action.OpenInBrowser
-                  title="Update Via Homebrew"
-                  icon={Icon.Terminal}
-                  url={`raycast://script-command/run?script=brew%20upgrade%20--cask%20${app.homebrewCask}`}
-                />
-              )}
-              {app.sources.includes("App Store") && app.appStoreId && (
-                <Action.OpenInBrowser
-                  title="Open in App Store"
-                  url={`macappstore://apps.apple.com/app/id${app.appStoreId}`}
-                />
-              )}
-              {app.sources.includes("Sparkle") && app.bundleId && (
-                <Action
-                  title="Update in Vesslo"
-                  icon={Icon.Download}
-                  onAction={() => open(`vesslo://app/${app.bundleId}`)}
-                />
-              )}
-            </ActionPanel.Section>
-          )}
-        </ActionPanel>
-      }
-    />
   );
 }
