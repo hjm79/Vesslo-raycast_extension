@@ -59,9 +59,7 @@ export default function BulkHomebrewUpdate() {
         message: `${homebrewAppsWithUpdates.length} apps`,
       });
 
-      const { stdout } = await execAsync(
-        "/opt/homebrew/bin/brew upgrade --cask",
-      );
+      const { stdout } = await execAsync("brew upgrade --cask");
 
       await showToast({
         style: Toast.Style.Success,
@@ -88,9 +86,7 @@ export default function BulkHomebrewUpdate() {
         title: `Updating ${appName}...`,
       });
 
-      const { stdout } = await execAsync(
-        `/opt/homebrew/bin/brew upgrade --cask ${caskName}`,
-      );
+      const { stdout } = await execAsync(`brew upgrade --cask ${caskName}`);
 
       await showToast({
         style: Toast.Style.Success,

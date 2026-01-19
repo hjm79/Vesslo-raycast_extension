@@ -164,9 +164,7 @@ async function runBrewUpgrade(caskName: string, appName: string) {
       message: `brew upgrade --cask ${caskName}`,
     });
 
-    const { stdout } = await execAsync(
-      `/opt/homebrew/bin/brew upgrade --cask ${caskName}`,
-    );
+    const { stdout } = await execAsync(`brew upgrade --cask ${caskName}`);
 
     await showToast({
       style: Toast.Style.Success,
