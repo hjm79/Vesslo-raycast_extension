@@ -164,8 +164,9 @@ async function runBrewUpgrade(caskName: string, appName: string) {
       message: `brew upgrade --cask ${caskName}`,
     });
 
-    const { stdout } = await execAsync(`brew upgrade --cask ${caskName}`);
-
+    const { stdout } = await execAsync(
+      `brew upgrade --cask ${JSON.stringify(caskName)}`,
+    );
     await showToast({
       style: Toast.Style.Success,
       title: `${appName} updated!`,

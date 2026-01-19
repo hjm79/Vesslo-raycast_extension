@@ -86,7 +86,9 @@ export default function BulkHomebrewUpdate() {
         title: `Updating ${appName}...`,
       });
 
-      const { stdout } = await execAsync(`brew upgrade --cask ${caskName}`);
+      const { stdout } = await execAsync(
+        `brew upgrade --cask ${JSON.stringify(caskName)}`,
+      );
 
       await showToast({
         style: Toast.Style.Success,
