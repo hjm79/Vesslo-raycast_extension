@@ -5,6 +5,8 @@
   <h1 align="center">Vesslo</h1>
 </p>
 
+https://github.com/hjm79/Vesslo-MacAppManager
+
 Search and manage your Vesslo app library directly from Raycast.
 
 ## Features
