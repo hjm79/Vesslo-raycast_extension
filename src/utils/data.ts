@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { VessloData } from "../types";
 
-const DATA_PATH = join(homedir(), ".vesslo", "data.json");
+const DATA_PATH = join(homedir(), "Library", "Application Support", "Vesslo", "raycast_data.json");
 
 export function loadVessloData(): VessloData | null {
   try {
