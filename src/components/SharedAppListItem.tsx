@@ -100,7 +100,7 @@ export function SharedAppListItem({
             />
             {app.bundleId && (
               <Action.CopyToClipboard
-                title="Copy Bundle Id"
+                title="Copy Bundle ID"
                 content={app.bundleId}
               />
             )}

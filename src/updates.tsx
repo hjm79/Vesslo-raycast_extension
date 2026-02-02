@@ -12,10 +12,11 @@ import {
 import { useState, useMemo, useEffect } from "react";
 import { loadVessloData } from "./utils/data";
 import { VessloApp, VessloData } from "./types";
-import { exec } from "child_process";
-import { promisify } from "util";
-
-const execAsync = promisify(exec);
+import {
+  runBrewUpgrade,
+  runBrewUpgradeInTerminal,
+  runMasUpgradeInTerminal,
+} from "./utils/actions";
 
 type SortOption = "source" | "name" | "nameDesc" | "developer";
 
@@ -47,7 +48,13 @@ export default function Updates() {
 
   const appsWithUpdates = useMemo(() => {
     if (!data) return [];
-    return data.apps.filter((app) => app.targetVersion !== null);
+    return data.apps.filter(
+      (app) =>
+        app.targetVersion !== null &&
+        app.targetVersion !== undefined &&
+        app.targetVersion !== "undefined" &&
+        app.targetVersion.trim() !== "",
+    );
   }, [data]);
 
   // Sort apps based on sortBy option
@@ -156,33 +163,6 @@ export default function Updates() {
   );
 }
 
-async function runBrewUpgrade(caskName: string, appName: string) {
-  try {
-    await showToast({
-      style: Toast.Style.Animated,
-      title: `Updating ${appName}...`,
-      message: `brew upgrade --cask ${caskName}`,
-    });
-
-    const { stdout } = await execAsync(
-      `brew upgrade --cask ${JSON.stringify(caskName)}`,
-    );
-    await showToast({
-      style: Toast.Style.Success,
-      title: `${appName} updated!`,
-      message: stdout || "Update complete",
-    });
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    await showToast({
-      style: Toast.Style.Failure,
-      title: `Failed to update ${appName}`,
-      message: errorMessage,
-    });
-  }
-}
-
 function UpdateListItem({ app }: { app: VessloApp }) {
   const versionInfo = `${app.version} → ${app.targetVersion}`;
 
@@ -223,6 +203,25 @@ function UpdateListItem({ app }: { app: VessloApp }) {
                 onAction={() => runBrewUpgrade(app.homebrewCask!, app.name)}
               />
             )}
+            {isHomebrew && app.homebrewCask && (
+              <Action
+                title="Update Via Terminal"
+                icon={Icon.Terminal}
+                shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
+                onAction={() => runBrewUpgradeInTerminal(app.homebrewCask!)}
+              />
+            )}
+            {isHomebrew && app.bundleId && (
+              <Action
+                title="Update Via Vesslo"
+                icon={Icon.Link}
+                shortcut={{ modifiers: ["cmd", "shift"], key: "v" }}
+                onAction={async () => {
+                  await closeMainWindow();
+                  open(`vesslo://update/${app.bundleId}`);
+                }}
+              />
+            )}
             {isAppStore && app.appStoreId && (
               <Action.OpenInBrowser
                 title="Open in App Store"
@@ -230,13 +229,21 @@ function UpdateListItem({ app }: { app: VessloApp }) {
                 url={`macappstore://apps.apple.com/app/id${app.appStoreId}`}
               />
             )}
-            {isSparkle && app.bundleId && (
+            {isAppStore && app.appStoreId && (
+              <Action
+                title="Update Via Terminal (Mas)"
+                icon={Icon.Terminal}
+                shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
+                onAction={() => runMasUpgradeInTerminal(app.appStoreId!)}
+              />
+            )}
+            {isSparkle && !isHomebrew && app.bundleId && (
               <Action
                 title="Update in Vesslo"
                 icon={Icon.Download}
                 onAction={async () => {
                   await closeMainWindow();
-                  open(`vesslo://app/${app.bundleId}`);
+                  open(`vesslo://update/${app.bundleId}`);
                 }}
               />
             )}

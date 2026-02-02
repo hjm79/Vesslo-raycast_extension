@@ -14,8 +14,17 @@ import { loadVessloData } from "./utils/data";
 import { VessloData } from "./types";
 import { exec } from "child_process";
 import { promisify } from "util";
+import { existsSync } from "fs";
 
 const execAsync = promisify(exec);
+
+// Detect Homebrew path (Apple Silicon vs Intel)
+function getBrewPath(): string {
+  if (existsSync("/opt/homebrew/bin/brew")) {
+    return "/opt/homebrew/bin/brew";
+  }
+  return "/usr/local/bin/brew";
+}
 
 export default function BulkHomebrewUpdate() {
   const [data, setData] = useState<VessloData | null>(null);
@@ -59,7 +68,8 @@ export default function BulkHomebrewUpdate() {
         message: `${homebrewAppsWithUpdates.length} apps`,
       });
 
-      const { stdout } = await execAsync("brew upgrade --cask");
+      const brewPath = getBrewPath();
+      const { stdout } = await execAsync(`${brewPath} upgrade --cask`);
 
       await showToast({
         style: Toast.Style.Success,
@@ -86,8 +96,9 @@ export default function BulkHomebrewUpdate() {
         title: `Updating ${appName}...`,
       });
 
+      const brewPath = getBrewPath();
       const { stdout } = await execAsync(
-        `brew upgrade --cask ${JSON.stringify(caskName)}`,
+        `${brewPath} upgrade --cask ${JSON.stringify(caskName)}`,
       );
 
       await showToast({

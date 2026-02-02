@@ -1,8 +1,17 @@
 import { open, showToast, Toast, closeMainWindow } from "@raycast/api";
 import { exec } from "child_process";
 import { promisify } from "util";
+import { existsSync } from "fs";
 
 const execAsync = promisify(exec);
+
+// Detect Homebrew path (Apple Silicon vs Intel)
+function getBrewPath(): string {
+  if (existsSync("/opt/homebrew/bin/brew")) {
+    return "/opt/homebrew/bin/brew";
+  }
+  return "/usr/local/bin/brew";
+}
 
 export const VESSLO_URL_SCHEME = "vesslo://";
 
@@ -23,17 +32,9 @@ export function getAppStoreUrl(appStoreId: string): string {
   return `macappstore://apps.apple.com/app/id${appStoreId}`;
 }
 
-export function getBrewUpdateCommand(caskName: string): string {
-  // In search-apps, we used a raycast script command URL, but we can also just execute it if we want consistent behavior.
-  // However, for Action.OpenInBrowser (which is what search-apps used), we need a URL.
-  // The original search-apps used: raycast://script-command/run?script=...
-  // Let's keep that for now if we want to use Action.OpenInBrowser, OR we can use the Action onAction handler like in updates.tsx
-
-  // For now, let's provide the script URL helper
-  return `raycast://script-command/run?script=${encodeURIComponent(`brew upgrade --cask ${JSON.stringify(caskName)}`)}`;
-}
-
 export async function runBrewUpgrade(caskName: string, appName: string) {
+  const brewPath = getBrewPath();
+
   try {
     await showToast({
       style: Toast.Style.Animated,
@@ -41,7 +42,7 @@ export async function runBrewUpgrade(caskName: string, appName: string) {
     });
 
     const { stdout } = await execAsync(
-      `brew upgrade --cask ${JSON.stringify(caskName)}`,
+      `${brewPath} upgrade --cask ${JSON.stringify(caskName)}`,
     );
 
     await showToast({
@@ -56,6 +57,43 @@ export async function runBrewUpgrade(caskName: string, appName: string) {
       style: Toast.Style.Failure,
       title: `Failed to update ${appName}`,
       message: errorMessage,
+    });
+  }
+}
+
+export async function runBrewUpgradeInTerminal(caskName: string) {
+  const brewPath = getBrewPath();
+  const command = `${brewPath} upgrade --cask ${caskName}`;
+
+  try {
+    await closeMainWindow();
+    // Activate Terminal first, then run the command in a new window
+    await execAsync(
+      `osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "${command}"' -e 'end tell'`,
+    );
+  } catch (error) {
+    await showToast({
+      style: Toast.Style.Failure,
+      title: "Failed to open Terminal",
+      message: String(error),
+    });
+  }
+}
+
+export async function runMasUpgradeInTerminal(appStoreId: string) {
+  const command = `mas upgrade ${appStoreId}`;
+
+  try {
+    await closeMainWindow();
+    // Activate Terminal first, then run the command in a new window
+    await execAsync(
+      `osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "${command}"' -e 'end tell'`,
+    );
+  } catch (error) {
+    await showToast({
+      style: Toast.Style.Failure,
+      title: "Failed to open Terminal",
+      message: String(error),
     });
   }
 }
