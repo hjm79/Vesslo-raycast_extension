@@ -1,17 +1,9 @@
 import { open, showToast, Toast, closeMainWindow } from "@raycast/api";
 import { exec } from "child_process";
 import { promisify } from "util";
-import { existsSync } from "fs";
+import { getBrewPath } from "./brew";
 
 const execAsync = promisify(exec);
-
-// Detect Homebrew path (Apple Silicon vs Intel)
-function getBrewPath(): string {
-  if (existsSync("/opt/homebrew/bin/brew")) {
-    return "/opt/homebrew/bin/brew";
-  }
-  return "/usr/local/bin/brew";
-}
 
 export const VESSLO_URL_SCHEME = "vesslo://";
 
@@ -23,7 +15,7 @@ export async function openInVesslo(bundleId: string) {
     await showToast({
       style: Toast.Style.Failure,
       title: "Failed to open in Vesslo",
-      message: String(error),
+      message: String(error).slice(0, 100),
     });
   }
 }
@@ -41,18 +33,50 @@ export async function runBrewUpgrade(caskName: string, appName: string) {
       title: `Updating ${appName}...`,
     });
 
-    const { stdout } = await execAsync(
-      `${brewPath} upgrade --cask ${JSON.stringify(caskName)}`,
+    const { stdout, stderr } = await execAsync(
+      `${brewPath} upgrade --cask ${JSON.stringify(caskName)} 2>&1`,
     );
 
-    await showToast({
-      style: Toast.Style.Success,
-      title: `${appName} updated!`,
-      message: stdout || "Update complete",
-    });
+    const output = stdout + stderr;
+
+    // Check if already up-to-date (explicit messages only)
+    if (
+      output.includes("already installed") ||
+      output.includes("up-to-date") ||
+      output.includes("No cask to upgrade")
+    ) {
+      await showToast({
+        style: Toast.Style.Success,
+        title: `${appName} is up-to-date`,
+        message: "No update needed",
+      });
+      return;
+    }
+
+    // Update succeeded - check if app was running (needs restart)
+    // Homebrew updates files even if app is running, but needs restart to apply
+    const wasRunning =
+      output.includes("currently running") ||
+      output.includes("currently open") ||
+      output.includes("Please quit");
+
+    if (wasRunning) {
+      await showToast({
+        style: Toast.Style.Success,
+        title: `${appName} updated!`,
+        message: "Restart app to apply changes",
+      });
+    } else {
+      await showToast({
+        style: Toast.Style.Success,
+        title: `${appName} updated!`,
+        message: output?.slice(0, 100) || "Update complete",
+      });
+    }
   } catch (error: unknown) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+      error instanceof Error ? error.message.slice(0, 100) : "Unknown error";
+
     await showToast({
       style: Toast.Style.Failure,
       title: `Failed to update ${appName}`,
@@ -67,15 +91,20 @@ export async function runBrewUpgradeInTerminal(caskName: string) {
 
   try {
     await closeMainWindow();
-    // Activate Terminal first, then run the command in a new window
+    // Use delay to prevent command double-entry during shell initialization
     await execAsync(
-      `osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "${command}"' -e 'end tell'`,
+      `osascript -e 'tell application "Terminal"
+        activate
+        if not (exists window 1) then do script ""
+        delay 0.2
+        do script "${command}" in front window
+      end tell'`,
     );
   } catch (error) {
     await showToast({
       style: Toast.Style.Failure,
       title: "Failed to open Terminal",
-      message: String(error),
+      message: String(error).slice(0, 100),
     });
   }
 }
@@ -85,15 +114,20 @@ export async function runMasUpgradeInTerminal(appStoreId: string) {
 
   try {
     await closeMainWindow();
-    // Activate Terminal first, then run the command in a new window
+    // Use delay to prevent command double-entry during shell initialization
     await execAsync(
-      `osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "${command}"' -e 'end tell'`,
+      `osascript -e 'tell application "Terminal"
+        activate
+        if not (exists window 1) then do script ""
+        delay 0.2
+        do script "${command}" in front window
+      end tell'`,
     );
   } catch (error) {
     await showToast({
       style: Toast.Style.Failure,
       title: "Failed to open Terminal",
-      message: String(error),
+      message: String(error).slice(0, 100),
     });
   }
 }

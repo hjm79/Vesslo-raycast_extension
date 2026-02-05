@@ -8,34 +8,22 @@ import {
   Color,
   confirmAlert,
   Alert,
+  open,
+  closeMainWindow,
 } from "@raycast/api";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { loadVessloData } from "./utils/data";
-import { VessloData } from "./types";
 import { exec } from "child_process";
 import { promisify } from "util";
-import { existsSync } from "fs";
+import { getBrewPath } from "./utils/brew";
+import { useVessloData } from "./utils/useVessloData";
+import { runBrewUpgrade, runBrewUpgradeInTerminal } from "./utils/actions";
 
 const execAsync = promisify(exec);
 
-// Detect Homebrew path (Apple Silicon vs Intel)
-function getBrewPath(): string {
-  if (existsSync("/opt/homebrew/bin/brew")) {
-    return "/opt/homebrew/bin/brew";
-  }
-  return "/usr/local/bin/brew";
-}
-
 export default function BulkHomebrewUpdate() {
-  const [data, setData] = useState<VessloData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading, setData } = useVessloData();
   const [isUpdating, setIsUpdating] = useState(false);
-
-  useEffect(() => {
-    const loaded = loadVessloData();
-    setData(loaded);
-    setIsLoading(false);
-  }, []);
 
   const homebrewAppsWithUpdates = useMemo(() => {
     if (!data) return [];
@@ -47,7 +35,21 @@ export default function BulkHomebrewUpdate() {
     );
   }, [data]);
 
-  async function updateAll() {
+  // Update All via Vesslo deep link (recommended)
+  async function updateAllViaVesslo() {
+    if (homebrewAppsWithUpdates.length === 0) return;
+
+    await closeMainWindow();
+    await open("vesslo://update-all");
+    await showToast({
+      style: Toast.Style.Success,
+      title: "Opening Vesslo",
+      message: "Batch update started in Vesslo",
+    });
+  }
+
+  // Quick Update All directly in Raycast (alternative)
+  async function updateAllDirect() {
     if (homebrewAppsWithUpdates.length === 0) return;
 
     const confirmed = await confirmAlert({
@@ -74,11 +76,11 @@ export default function BulkHomebrewUpdate() {
       await showToast({
         style: Toast.Style.Success,
         title: "All apps updated!",
-        message: stdout || "Update complete",
+        message: stdout?.slice(0, 100) || "Update complete",
       });
     } catch (error: unknown) {
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+        error instanceof Error ? error.message.slice(0, 100) : "Unknown error";
       await showToast({
         style: Toast.Style.Failure,
         title: "Update failed",
@@ -86,35 +88,20 @@ export default function BulkHomebrewUpdate() {
       });
     } finally {
       setIsUpdating(false);
+      const refreshed = loadVessloData();
+      if (refreshed) setData(refreshed);
     }
   }
 
-  async function updateSingle(caskName: string, appName: string) {
-    try {
-      await showToast({
-        style: Toast.Style.Animated,
-        title: `Updating ${appName}...`,
-      });
-
-      const brewPath = getBrewPath();
-      const { stdout } = await execAsync(
-        `${brewPath} upgrade --cask ${JSON.stringify(caskName)}`,
-      );
-
-      await showToast({
-        style: Toast.Style.Success,
-        title: `${appName} updated!`,
-        message: stdout || "Update complete",
-      });
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
-      await showToast({
-        style: Toast.Style.Failure,
-        title: `Failed to update ${appName}`,
-        message: errorMessage,
-      });
-    }
+  // Update single app via Vesslo deep link (default)
+  async function updateSingleViaVesslo(bundleId: string, appName: string) {
+    await closeMainWindow();
+    await open(`vesslo://update/${bundleId}`);
+    await showToast({
+      style: Toast.Style.Success,
+      title: `Opening Vesslo`,
+      message: `Updating ${appName}...`,
+    });
   }
 
   return (
@@ -138,11 +125,21 @@ export default function BulkHomebrewUpdate() {
               accessories={[{ tag: { value: "BULK", color: Color.Green } }]}
               actions={
                 <ActionPanel>
-                  <Action
-                    title="Update All"
-                    icon={Icon.ArrowDown}
-                    onAction={updateAll}
-                  />
+                  <ActionPanel.Section title="Recommended">
+                    <Action
+                      title="Update All in Vesslo"
+                      icon={Icon.Download}
+                      onAction={updateAllViaVesslo}
+                    />
+                  </ActionPanel.Section>
+                  <ActionPanel.Section title="Alternative">
+                    <Action
+                      title="Quick Update All (Direct)"
+                      icon={Icon.ArrowDown}
+                      shortcut={{ modifiers: ["cmd", "shift"], key: "enter" }}
+                      onAction={updateAllDirect}
+                    />
+                  </ActionPanel.Section>
                 </ActionPanel>
               }
             />
@@ -164,16 +161,42 @@ export default function BulkHomebrewUpdate() {
                 ]}
                 actions={
                   <ActionPanel>
-                    <Action
-                      title="Update"
-                      icon={Icon.ArrowDown}
-                      onAction={() => updateSingle(app.homebrewCask!, app.name)}
-                    />
-                    <Action
-                      title="Update All"
-                      icon={Icon.ArrowDown}
-                      onAction={updateAll}
-                    />
+                    <ActionPanel.Section title="Recommended">
+                      {app.bundleId && (
+                        <Action
+                          title="Update in Vesslo"
+                          icon={Icon.Download}
+                          onAction={() =>
+                            updateSingleViaVesslo(app.bundleId!, app.name)
+                          }
+                        />
+                      )}
+                    </ActionPanel.Section>
+                    <ActionPanel.Section title="Alternative">
+                      <Action
+                        title="Quick Update (Direct)"
+                        icon={Icon.ArrowDown}
+                        shortcut={{ modifiers: ["cmd", "shift"], key: "enter" }}
+                        onAction={() =>
+                          runBrewUpgrade(app.homebrewCask!, app.name)
+                        }
+                      />
+                      <Action
+                        title="Update Via Terminal"
+                        icon={Icon.Terminal}
+                        shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
+                        onAction={() =>
+                          runBrewUpgradeInTerminal(app.homebrewCask!)
+                        }
+                      />
+                    </ActionPanel.Section>
+                    <ActionPanel.Section title="Bulk">
+                      <Action
+                        title="Update All in Vesslo"
+                        icon={Icon.Download}
+                        onAction={updateAllViaVesslo}
+                      />
+                    </ActionPanel.Section>
                   </ActionPanel>
                 }
               />

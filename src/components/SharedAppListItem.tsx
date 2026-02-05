@@ -1,6 +1,12 @@
 import { Action, ActionPanel, Color, Icon, List } from "@raycast/api";
 import { VessloApp } from "../types";
-import { getAppStoreUrl, openInVesslo, runBrewUpgrade } from "../utils/actions";
+import {
+  getAppStoreUrl,
+  openInVesslo,
+  runBrewUpgrade,
+  runBrewUpgradeInTerminal,
+  runMasUpgradeInTerminal,
+} from "../utils/actions";
 
 interface SharedAppListItemProps {
   app: VessloApp;
@@ -111,14 +117,30 @@ export function SharedAppListItem({
               {app.sources.includes("Brew") && app.homebrewCask && (
                 <Action
                   title="Update Via Homebrew"
-                  icon={Icon.Terminal}
+                  icon={Icon.ArrowDown}
                   onAction={() => runBrewUpgrade(app.homebrewCask!, app.name)}
+                />
+              )}
+              {app.sources.includes("Brew") && app.homebrewCask && (
+                <Action
+                  title="Update Via Terminal"
+                  icon={Icon.Terminal}
+                  shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
+                  onAction={() => runBrewUpgradeInTerminal(app.homebrewCask!)}
                 />
               )}
               {app.sources.includes("App Store") && app.appStoreId && (
                 <Action.OpenInBrowser
                   title="Open in App Store"
                   url={getAppStoreUrl(app.appStoreId)}
+                />
+              )}
+              {app.sources.includes("App Store") && app.appStoreId && (
+                <Action
+                  title="Update Via Terminal (Mas)"
+                  icon={Icon.Terminal}
+                  shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
+                  onAction={() => runMasUpgradeInTerminal(app.appStoreId!)}
                 />
               )}
               {app.sources.includes("Sparkle") && app.bundleId && (

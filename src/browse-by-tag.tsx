@@ -1,35 +1,12 @@
-import {
-  Action,
-  ActionPanel,
-  Icon,
-  List,
-  showToast,
-  Toast,
-  Color,
-} from "@raycast/api";
-import { useState, useMemo, useEffect } from "react";
-import { loadVessloData } from "./utils/data";
-import { VessloApp, VessloData } from "./types";
+import { Action, ActionPanel, Icon, List, Color } from "@raycast/api";
+import { useState, useMemo } from "react";
+import { VessloApp } from "./types";
 import { SharedAppListItem } from "./components/SharedAppListItem";
+import { useVessloData } from "./utils/useVessloData";
 
 export default function BrowseByTag() {
-  const [data, setData] = useState<VessloData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading } = useVessloData();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loaded = loadVessloData();
-    setData(loaded);
-    setIsLoading(false);
-
-    if (!loaded) {
-      showToast({
-        style: Toast.Style.Failure,
-        title: "Vesslo data not found",
-        message: "Please run Vesslo app first",
-      });
-    }
-  }, []);
 
   // Get all unique tags with app counts
   const tagGroups = useMemo(() => {

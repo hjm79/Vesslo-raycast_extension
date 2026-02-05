@@ -1,8 +1,8 @@
-import { Icon, List, showToast, Toast } from "@raycast/api";
-import { useState, useMemo, useEffect } from "react";
-import { loadVessloData } from "./utils/data";
-import { VessloApp, VessloData } from "./types";
+import { Icon, List } from "@raycast/api";
+import { useState, useMemo } from "react";
+import { VessloApp } from "./types";
 import { SharedAppListItem } from "./components/SharedAppListItem";
+import { useVessloData } from "./utils/useVessloData";
 
 interface SearchResult {
   app: VessloApp;
@@ -11,22 +11,7 @@ interface SearchResult {
 
 export default function SearchApps() {
   const [searchText, setSearchText] = useState("");
-  const [data, setData] = useState<VessloData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loaded = loadVessloData();
-    setData(loaded);
-    setIsLoading(false);
-
-    if (!loaded) {
-      showToast({
-        style: Toast.Style.Failure,
-        title: "Vesslo data not found",
-        message: "Please run Vesslo app first",
-      });
-    }
-  }, []);
+  const { data, isLoading } = useVessloData();
 
   const searchResults = useMemo((): SearchResult[] => {
     if (!data) return [];

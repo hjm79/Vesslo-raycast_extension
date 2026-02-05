@@ -3,48 +3,23 @@ import {
   ActionPanel,
   Icon,
   List,
-  showToast,
-  Toast,
   open,
   Color,
   closeMainWindow,
 } from "@raycast/api";
-import { useState, useMemo, useEffect } from "react";
-import { loadVessloData } from "./utils/data";
-import { VessloApp, VessloData } from "./types";
+import { useState, useMemo } from "react";
+import { VessloApp } from "./types";
 import {
   runBrewUpgrade,
   runBrewUpgradeInTerminal,
   runMasUpgradeInTerminal,
 } from "./utils/actions";
-
-type SortOption = "source" | "name" | "nameDesc" | "developer";
-
-const sortLabels: Record<SortOption, string> = {
-  source: "By Source",
-  name: "By Name (A-Z)",
-  nameDesc: "By Name (Z-A)",
-  developer: "By Developer",
-};
+import { SORT_LABELS, SortOption } from "./constants";
+import { useVessloData } from "./utils/useVessloData";
 
 export default function Updates() {
-  const [data, setData] = useState<VessloData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading } = useVessloData();
   const [sortBy, setSortBy] = useState<SortOption>("source");
-
-  useEffect(() => {
-    const loaded = loadVessloData();
-    setData(loaded);
-    setIsLoading(false);
-
-    if (!loaded) {
-      showToast({
-        style: Toast.Style.Failure,
-        title: "Vesslo data not found",
-        message: "Please run Vesslo app first",
-      });
-    }
-  }, []);
 
   const appsWithUpdates = useMemo(() => {
     if (!data) return [];
@@ -99,7 +74,7 @@ export default function Updates() {
           storeValue
           onChange={(value) => setSortBy(value as SortOption)}
         >
-          {Object.entries(sortLabels).map(([key, label]) => (
+          {Object.entries(SORT_LABELS).map(([key, label]) => (
             <List.Dropdown.Item key={key} title={label} value={key} />
           ))}
         </List.Dropdown>
@@ -152,7 +127,7 @@ export default function Updates() {
       ) : (
         // Flat list (sorted by name or developer)
         <List.Section
-          title={`Updates (${sortedApps.length}) - ${sortLabels[sortBy]}`}
+          title={`Updates (${sortedApps.length}) - ${SORT_LABELS[sortBy]}`}
         >
           {sortedApps.map((app) => (
             <UpdateListItem key={app.id} app={app} />
@@ -194,12 +169,27 @@ function UpdateListItem({ app }: { app: VessloApp }) {
       accessories={[{ text: versionInfo }, { tag: sourceBadge }]}
       actions={
         <ActionPanel>
-          <ActionPanel.Section title="Update">
-            {/* Primary action based on source */}
+          {/* Recommended: Vesslo Deep Link (Default) */}
+          <ActionPanel.Section title="Recommended">
+            {app.bundleId && (
+              <Action
+                title="Update in Vesslo"
+                icon={Icon.Download}
+                onAction={async () => {
+                  await closeMainWindow();
+                  open(`vesslo://update/${app.bundleId}`);
+                }}
+              />
+            )}
+          </ActionPanel.Section>
+
+          {/* Alternative: Direct/Terminal */}
+          <ActionPanel.Section title="Alternative">
             {isHomebrew && app.homebrewCask && (
               <Action
-                title="Update Via Homebrew"
+                title="Quick Update (Direct)"
                 icon={Icon.ArrowDown}
+                shortcut={{ modifiers: ["cmd", "shift"], key: "enter" }}
                 onAction={() => runBrewUpgrade(app.homebrewCask!, app.name)}
               />
             )}
@@ -211,21 +201,11 @@ function UpdateListItem({ app }: { app: VessloApp }) {
                 onAction={() => runBrewUpgradeInTerminal(app.homebrewCask!)}
               />
             )}
-            {isHomebrew && app.bundleId && (
-              <Action
-                title="Update Via Vesslo"
-                icon={Icon.Link}
-                shortcut={{ modifiers: ["cmd", "shift"], key: "v" }}
-                onAction={async () => {
-                  await closeMainWindow();
-                  open(`vesslo://update/${app.bundleId}`);
-                }}
-              />
-            )}
             {isAppStore && app.appStoreId && (
               <Action.OpenInBrowser
                 title="Open in App Store"
                 icon={Icon.AppWindowList}
+                shortcut={{ modifiers: ["cmd", "shift"], key: "enter" }}
                 url={`macappstore://apps.apple.com/app/id${app.appStoreId}`}
               />
             )}
@@ -237,28 +217,9 @@ function UpdateListItem({ app }: { app: VessloApp }) {
                 onAction={() => runMasUpgradeInTerminal(app.appStoreId!)}
               />
             )}
-            {isSparkle && !isHomebrew && app.bundleId && (
-              <Action
-                title="Update in Vesslo"
-                icon={Icon.Download}
-                onAction={async () => {
-                  await closeMainWindow();
-                  open(`vesslo://update/${app.bundleId}`);
-                }}
-              />
-            )}
-            {/* Fallback for other sources */}
-            {!isHomebrew && !isAppStore && !isSparkle && app.bundleId && (
-              <Action
-                title="Open in Vesslo"
-                icon={Icon.Link}
-                onAction={async () => {
-                  await closeMainWindow();
-                  open(`vesslo://app/${app.bundleId}`);
-                }}
-              />
-            )}
           </ActionPanel.Section>
+
+          {/* General Actions */}
           <ActionPanel.Section>
             <Action.Open title="Open App" target={app.path} />
             <Action.ShowInFinder path={app.path} />
