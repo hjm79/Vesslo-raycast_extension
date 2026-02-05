@@ -91,13 +91,17 @@ export async function runBrewUpgradeInTerminal(caskName: string) {
 
   try {
     await closeMainWindow();
-    // Use delay to prevent command double-entry during shell initialization
+    // If Terminal window exists, run immediately; otherwise create new and wait
     await execAsync(
       `osascript -e 'tell application "Terminal"
         activate
-        if not (exists window 1) then do script ""
-        delay 0.2
-        do script "${command}" in front window
+        if (count of windows) > 0 then
+          do script "${command}" in front window
+        else
+          do script ""
+          delay 3
+          do script "${command}" in front window
+        end if
       end tell'`,
     );
   } catch (error) {
@@ -114,13 +118,17 @@ export async function runMasUpgradeInTerminal(appStoreId: string) {
 
   try {
     await closeMainWindow();
-    // Use delay to prevent command double-entry during shell initialization
+    // If Terminal window exists, run immediately; otherwise create new and wait
     await execAsync(
       `osascript -e 'tell application "Terminal"
         activate
-        if not (exists window 1) then do script ""
-        delay 0.2
-        do script "${command}" in front window
+        if (count of windows) > 0 then
+          do script "${command}" in front window
+        else
+          do script ""
+          delay 3
+          do script "${command}" in front window
+        end if
       end tell'`,
     );
   } catch (error) {
