@@ -13,16 +13,12 @@ import {
 } from "@raycast/api";
 import { useState, useMemo } from "react";
 import { loadVessloData } from "./utils/data";
-// loadVessloData is used for post-update refresh in updateAllDirect()
 import { exec } from "child_process";
 import { promisify } from "util";
 import { getBrewPath } from "./utils/brew";
 import { useVessloData } from "./utils/useVessloData";
-import {
-  BREW_MAX_BUFFER,
-  runBrewUpgrade,
-  runBrewUpgradeInTerminal,
-} from "./utils/actions";
+import { runBrewUpgrade, runBrewUpgradeInTerminal } from "./utils/actions";
+import { hasValidTargetVersion } from "./utils/update-filter";
 
 const execAsync = promisify(exec);
 
@@ -34,14 +30,8 @@ export default function BulkHomebrewUpdate() {
     if (!data) return [];
     return data.apps.filter(
       (app) =>
-        !app.isDeleted &&
-        !app.isSkipped &&
-        !app.isIgnored &&
         app.sources.includes("Brew") &&
-        app.targetVersion !== null &&
-        app.targetVersion !== undefined &&
-        app.targetVersion !== "undefined" &&
-        app.targetVersion.trim() !== "" &&
+        hasValidTargetVersion(app.targetVersion) &&
         app.homebrewCask,
     );
   }, [data]);
@@ -82,9 +72,7 @@ export default function BulkHomebrewUpdate() {
       });
 
       const brewPath = getBrewPath();
-      const { stdout } = await execAsync(`${brewPath} upgrade --cask`, {
-        maxBuffer: BREW_MAX_BUFFER,
-      });
+      const { stdout } = await execAsync(`${brewPath} upgrade --cask`);
 
       await showToast({
         style: Toast.Style.Success,
@@ -119,7 +107,13 @@ export default function BulkHomebrewUpdate() {
 
   return (
     <List isLoading={isLoading || isUpdating}>
-      {homebrewAppsWithUpdates.length === 0 ? (
+      {!data ? (
+        <List.EmptyView
+          icon={Icon.Warning}
+          title="Vesslo data not found"
+          description="Please run Vesslo app to export data"
+        />
+      ) : homebrewAppsWithUpdates.length === 0 ? (
         <List.EmptyView
           icon={Icon.CheckCircle}
           title="All Homebrew apps are up to date!"
