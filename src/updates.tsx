@@ -51,7 +51,9 @@ export default function Updates() {
     (app) => app.sources.includes("Sparkle") && !app.sources.includes("Brew"),
   );
   const appStoreApps = sortedApps.filter((app) =>
-    app.sources.includes("App Store"),
+    app.sources.includes("App Store") &&
+    !app.sources.includes("Brew") &&
+    !app.sources.includes("Sparkle"),
   );
   const otherApps = sortedApps.filter(
     (app) =>
@@ -200,7 +202,7 @@ function UpdateListItem({ app }: { app: VessloApp }) {
               <Action.OpenInBrowser
                 title="Open in App Store"
                 icon={Icon.AppWindowList}
-                shortcut={{ modifiers: ["cmd", "shift"], key: "enter" }}
+                shortcut={{ modifiers: ["cmd", "shift"], key: "o" }}
                 url={`macappstore://apps.apple.com/app/id${app.appStoreId}`}
               />
             )}
@@ -208,7 +210,7 @@ function UpdateListItem({ app }: { app: VessloApp }) {
               <Action
                 title="Update Via Terminal (Mas)"
                 icon={Icon.Terminal}
-                shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
+                shortcut={{ modifiers: ["cmd", "shift"], key: "m" }}
                 onAction={() => runMasUpgradeInTerminal(app.appStoreId!)}
               />
             )}

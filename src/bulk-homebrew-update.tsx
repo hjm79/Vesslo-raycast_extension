@@ -12,7 +12,6 @@ import {
   closeMainWindow,
 } from "@raycast/api";
 import { useState, useMemo } from "react";
-import { loadVessloData } from "./utils/data";
 import { exec } from "child_process";
 import { promisify } from "util";
 import { getBrewPath } from "./utils/brew";
@@ -23,7 +22,7 @@ import { hasValidTargetVersion } from "./utils/update-filter";
 const execAsync = promisify(exec);
 
 export default function BulkHomebrewUpdate() {
-  const { data, isLoading, setData } = useVessloData();
+  const { data, isLoading } = useVessloData();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const homebrewAppsWithUpdates = useMemo(() => {
@@ -72,7 +71,8 @@ export default function BulkHomebrewUpdate() {
       });
 
       const brewPath = getBrewPath();
-      const { stdout } = await execAsync(`${brewPath} upgrade --cask`);
+      // maxBuffer: 50MB — brew upgrade --cask 출력이 기본 1MB를 초과하면 크래시 발생
+      const { stdout } = await execAsync(`${brewPath} upgrade --cask`, { maxBuffer: 1024 * 1024 * 50 });
 
       await showToast({
         style: Toast.Style.Success,
@@ -89,8 +89,7 @@ export default function BulkHomebrewUpdate() {
       });
     } finally {
       setIsUpdating(false);
-      const refreshed = loadVessloData();
-      if (refreshed) setData(refreshed);
+      // polling(3초)이 mtimeMs로 자동 감지하여 갱신하므로 수동 setData 불필요
     }
   }
 
