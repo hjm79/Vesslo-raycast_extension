@@ -30,7 +30,7 @@
       "name": "bulk-homebrew-update",
       "title": "Bulk Homebrew Update",
       "subtitle": "Vesslo",
-      "description": "Update all Homebrew cask apps at once",
+      "description": "Update eligible Homebrew cask apps from Vesslo",
       "mode": "view"
     },
     {
