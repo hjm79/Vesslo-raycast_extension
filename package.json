@@ -42,7 +42,7 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.66.0"
+    "@raycast/api": "^1.104.20"
   },
   "overrides": {
     "@types/react": "18.2.27",
@@ -64,5 +64,8 @@
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
     "publish": "npx @raycast/api@latest publish"
-  }
+  },
+  "platforms": [
+    "macOS"
+  ]
 }

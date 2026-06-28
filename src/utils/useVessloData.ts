@@ -10,7 +10,7 @@ export function useVessloData() {
   const [isLoading, setIsLoading] = useState(true);
   const lastExportedAt = useRef<string | null>(null);
   const lastModifiedTime = useRef<number | null>(null);
-  const isMounted = useRef(true); // 언마운트 후 setData 호출 방지
+  const isMounted = useRef(true); // Prevent setData after unmount.
 
   useEffect(() => {
     isMounted.current = true;
@@ -46,7 +46,7 @@ export function useVessloData() {
       ) {
         lastExportedAt.current = newData.exportedAt;
         lastModifiedTime.current = newModifiedTime;
-        if (isMounted.current) setData(newData); // 마운트 상태일 때만 업데이트
+        if (isMounted.current) setData(newData);
       }
     }, REFRESH_INTERVAL);
 
