@@ -1,5 +1,25 @@
 # Raycast compact UI and closeout — 2026-09-13
 
+## Addendum: local app applied; observed preflight denial
+
+This addendum supersedes the earlier candidate-not-installed, denial-not-observed and replay-pending status below. The compact Raycast UI and runtime were already complete at extension HEAD `764932d`; this continuation did not rebuild, retest or replace the extension.
+
+The production candidate from `670bdf3` is now installed at `/Applications/Vesslo.app`, executable SHA-256 `39f23d6fe20b48f70b9fba03f20b036da777ae48f863c1ee68b51a8882d84be3`. All 134 installed bundle entries and signing checks matched the candidate after complete backups of five scopes. The prior `bdaad` bundle remains preserved. Installation and startup evidence are `/private/tmp/VessloLocalApply-20260913-4h9njb3k/installation.json`, `backup.json` and `startup-result.json`.
+
+The installed app started as PID `50350` and published session `57036E5C-45A7-442C-8A43-1AB009506019`: 201 installed apps plus 11 deleted records, 80 updates and 46 positive Homebrew proofs. The completed full check reported `failed/sourceFailure`; this global failure was not hidden by positive Homebrew results. Actual Raycast Bulk showed the 46 candidates with the compact UI. At the 10:14 UTC observation, their 15-minute proof lifetime had expired and Review Only appeared as expected. No additional app update was performed to recheck the already confirmed KeyCastr result.
+
+The standalone Automation probe subsequently observed an actual OS denial, `-1743`, on its initial nonprompting preflight against App Store. Its exact input is `/Users/hjm/Applications/VessloAutomationValidation-20260913/evidence/EDFAE52F-0697-4B88-A06A-C467B634EE2F.json`, SHA-256 `2bb13e47f6a68b39c705e2d4ce2e17825e91eda04ded9549801ab8e6b176b712`, directly read and hash-checked. This is an **initial-preflight denial observation**: the JSON retains `state=unexpected-status` and `denialSequenceVerified=false` because it did not execute the fresh three-step `-1744 → -1743 → -1743` sequence. Earlier unsuccessful fresh-sequence attempts remain historical failures. No Apple event was sent by this preflight.
+
+`/private/tmp/VessloLocalApply-20260913-4h9njb3k/runtime-closeout.json` records receipt (`a16b47da…a94bf`) and verification-items (`ace810d7…38b05`) hashes unchanged since before launch, the same new publisher session, and actual Raycast evidence `raycast-new-session.ax.txt` / `raycast-new-session.png`. The owned App Store PID `52287`, standalone probe PID `73062` and replay Test host PID `81391` all exited normally; the observed-denial JSON hash remained unchanged.
+
+The actual Vesslo Test recovery UI replay of that immutable input **passed 1/1 with zero skips and zero failures**, in Test host PID `81391`. It classified the observed error as `appStoreAutomationDenied` with `retryAfterUserAction`, offered no immediate retry or Installer action, and dismissed through Escape. No action ran, the synthetic version stayed unchanged and the original input SHA was rechecked. The attachment explicitly retains `evidenceKind=preflight-denial`, `denialSequenceVerified=false` and `observationCount=1`; this does not convert the earlier fresh three-step failures into passes.
+
+Replay evidence: `/private/tmp/VessloStableTCCReplay-20260913-6ot8ytam/ActualPreflightReplay.xcresult`, `actual-replay-summary.json`, and metadata/screenshot `actual-replay-attachments/2D865088-8AA3-47E4-B9C1-1AFF68AF7BA6.json` / `1C59C4D5-B1FD-47A5-9EB8-6C65854A7E75.png`. The result summary and metadata were directly read. The implementation and replay contract are in the app's [TCCPreflightDenialReplay2026-09-13.md](/Users/hjm/.codex/worktrees/dff0/Vesslo/vesslo-main-work/Docs/TCCPreflightDenialReplay2026-09-13.md). This is a separate-probe observed error replay and does not prove the installed Vesslo/mas permission chain or App Management denial. It is a separate run, not an addition to previous suite totals. Public release remains separate and was not performed.
+
+## Earlier closeout record
+
+The sections below preserve the status and evidence before the local app installation and later preflight observation above.
+
 ## Cause and scope
 
 The supplied Bulk Homebrew Update screenshot repeated UPDATE beside a version change and repeated Homebrew source pills in a Homebrew-only command. Policy and audit review labels could also compete. The receipt screenshot used an H1 status and placed internal request/session/revision fields above target results.
