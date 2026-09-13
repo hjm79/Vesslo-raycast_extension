@@ -21,6 +21,12 @@ declare namespace Preferences {
   export type BulkHomebrewUpdate = ExtensionPreferences & {}
   /** Preferences accessible in the `browse-by-tag` command */
   export type BrowseByTag = ExtensionPreferences & {}
+  /** Preferences accessible in the `review-apps` command */
+  export type ReviewApps = ExtensionPreferences & {}
+  /** Preferences accessible in the `deleted-apps` command */
+  export type DeletedApps = ExtensionPreferences & {}
+  /** Preferences accessible in the `handoff-requests` command */
+  export type HandoffRequests = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
@@ -32,5 +38,11 @@ declare namespace Arguments {
   export type BulkHomebrewUpdate = {}
   /** Arguments passed to the `browse-by-tag` command */
   export type BrowseByTag = {}
+  /** Arguments passed to the `review-apps` command */
+  export type ReviewApps = {}
+  /** Arguments passed to the `deleted-apps` command */
+  export type DeletedApps = {}
+  /** Arguments passed to the `handoff-requests` command */
+  export type HandoffRequests = {}
 }
 

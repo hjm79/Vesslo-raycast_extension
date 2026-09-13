@@ -1,0 +1,27 @@
+{
+  "completedCheckRevision": 1,
+  "createdAt": "2026-09-10T19:55:33.990Z",
+  "inventoryRevision": 1,
+  "publisherSessionId": "F0C6ECD4-04F9-4B02-933C-332AABCE636C",
+  "requestId": "06A56979-1C3B-4513-8B16-C26C973374CD",
+  "schemaVersion": 1,
+  "source": "homebrew",
+  "targets": [
+    {
+      "appId": "308EB8B8-EEED-4A81-8F39-AC5B20009797",
+      "bundleId": "invalid.vesslo.nativefixture.alpha",
+      "canonicalPath": "/VessloSynthetic/Alpha.app",
+      "caskToken": "vesslo-fixture-alpha",
+      "expectedTargetVersion": "2.0.0",
+      "installedVersion": "1.0.0"
+    },
+    {
+      "appId": "68466BF0-4C6C-45C2-8276-B1293DB8EF9B",
+      "bundleId": "invalid.vesslo.nativefixture.beta",
+      "canonicalPath": "/VessloSynthetic/Beta.app",
+      "caskToken": "vesslo-fixture-beta",
+      "expectedTargetVersion": "2.0.0",
+      "installedVersion": "1.0.0"
+    }
+  ]
+}

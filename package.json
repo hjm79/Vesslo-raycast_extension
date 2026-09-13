@@ -16,7 +16,7 @@
       "name": "search-apps",
       "title": "Search Apps",
       "subtitle": "Vesslo",
-      "description": "Search apps by name, developer, tags, or memo",
+      "description": "Search apps by name, Bundle ID, developer, tags, or memo",
       "mode": "view"
     },
     {
@@ -30,7 +30,7 @@
       "name": "bulk-homebrew-update",
       "title": "Bulk Homebrew Update",
       "subtitle": "Vesslo",
-      "description": "Update eligible Homebrew cask apps from Vesslo",
+      "description": "Select up to 16 exact Homebrew targets for confirmation in Vesslo",
       "mode": "view"
     },
     {
@@ -39,20 +39,41 @@
       "subtitle": "Vesslo",
       "description": "View apps grouped by tags",
       "mode": "view"
+    },
+    {
+      "name": "review-apps",
+      "title": "Review Apps",
+      "subtitle": "Vesslo",
+      "description": "Review exported security, update source, and app management findings",
+      "mode": "view"
+    },
+    {
+      "name": "deleted-apps",
+      "title": "Deleted Apps",
+      "subtitle": "Vesslo",
+      "description": "Review deleted app records exported by Vesslo",
+      "mode": "view"
+    },
+    {
+      "name": "handoff-requests",
+      "title": "Homebrew Requests",
+      "subtitle": "Vesslo",
+      "description": "Read Vesslo review request receipts and per-app verification results",
+      "mode": "view"
     }
   ],
   "dependencies": {
     "@raycast/api": "^1.104.22"
   },
   "overrides": {
-    "@types/react": "18.2.27",
+    "@types/react": "18.3.31",
     "@types/react-dom": "18.2.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
     "@raycast/eslint-config": "^2.1.1",
-    "@types/node": "20.10.0",
-    "@types/react": "18.2.27",
+    "@types/node": "20.19.43",
+    "@types/react": "18.3.31",
     "eslint": "^9.39.2",
     "prettier": "^3.0.3",
     "react": "^18.2.0",
@@ -63,7 +84,13 @@
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "publish": "npx @raycast/api@latest publish"
+    "publish": "npx @raycast/api@latest publish",
+    "test": "node scripts/test.cjs",
+    "typecheck": "tsc --noEmit --pretty false",
+    "lint:source": "eslint src",
+    "build:check": "ray build --environment dist --output dist --non-interactive",
+    "fixture:prepare": "node scripts/prepare-ui-fixture.cjs",
+    "fixture:verify": "node scripts/verify-ui-fixture.cjs"
   },
   "platforms": [
     "macOS"
