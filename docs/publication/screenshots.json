@@ -1,0 +1,49 @@
+{
+  "purpose": "Unedited real Raycast screenshots for introduction; not Store metadata assets",
+  "images": [
+    {
+      "file": "../../media/vesslo-search-apps.jpg",
+      "sourceCapture": "07-search-apps-final.png",
+      "captureDate": "2026-09-13",
+      "sha256": "7c51ecae49ea9b44501c88bd5f40b0e989261ae3e14a9044d3413eb9d3778517",
+      "format": "JPEG",
+      "width": 750,
+      "height": 475,
+      "contentEdited": false,
+      "storeMetadataReady": false
+    },
+    {
+      "file": "../../media/vesslo-view-updates.jpg",
+      "sourceCapture": "08-updates-final.png",
+      "captureDate": "2026-09-13",
+      "sha256": "8c0fe87f318aab5c8de4261c44ddd460a3aba08238b9b353dd47fd5df83ec8f5",
+      "format": "JPEG",
+      "width": 750,
+      "height": 475,
+      "contentEdited": false,
+      "storeMetadataReady": false
+    },
+    {
+      "file": "../../media/vesslo-homebrew-review.jpg",
+      "sourceCapture": "03-bulk-final.png",
+      "captureDate": "2026-09-13",
+      "sha256": "9a61fafcadfe1d509a75b395e1b42eb29a1400947be893d7dfdcb7877f79ee10",
+      "format": "JPEG",
+      "width": 750,
+      "height": 475,
+      "contentEdited": false,
+      "storeMetadataReady": false
+    },
+    {
+      "file": "../../media/vesslo-request-completed.jpg",
+      "sourceCapture": "05-receipt-summary-final.png",
+      "captureDate": "2026-09-13",
+      "sha256": "0a0799fe8c550257f81352d100799081c5bc1ac45d2a2c6901e4241d9f169725",
+      "format": "JPEG",
+      "width": 750,
+      "height": 475,
+      "contentEdited": false,
+      "storeMetadataReady": false
+    }
+  ]
+}
