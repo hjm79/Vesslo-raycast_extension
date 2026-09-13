@@ -1,34 +1,34 @@
 import { Action, ActionPanel, Detail, Icon } from "@raycast/api";
-import { HandoffRequest } from "../utils/handoff-contract";
+import { HandoffRequest, HandoffTarget } from "../utils/handoff-contract";
 import { HandoffReceipt, ReceiptPhase } from "../utils/receipt-contract";
 import { bindReceipt } from "../utils/receipt-contract";
 import { formatDate, markdownText } from "../utils/display-format";
 import { useHandoffReceipts } from "../utils/useHandoffReceipts";
 
 export const RECEIPT_PHASE_LABELS: Record<ReceiptPhase, string> = {
-  accepted: "Accepted — Awaiting Vesslo Review",
+  accepted: "Awaiting Review",
   rejected: "Rejected",
-  running: "Running — Completion Unconfirmed",
+  running: "Running",
   verificationPending: "Verification Pending",
-  completed: "Completed — Verified by Vesslo",
-  failed: "Failed — Check Each Target",
+  completed: "Completed",
+  failed: "Failed",
   cancelled: "Cancelled",
 };
 const PHASE_EXPLANATIONS: Record<ReceiptPhase, string> = {
   accepted:
-    "Vesslo has received the request. Execution and completion are not confirmed; review and confirmation occur in Vesslo.",
+    "Review and confirm in Vesslo. Execution and completion are not confirmed.",
   rejected:
-    "Vesslo rejected admission. Check each original target's reason; this is not an execution result.",
+    "Vesslo rejected the request before execution. Check the target reasons below.",
   running:
-    "Vesslo has entered the execution flow after confirmation. Terminal waiting and process exit do not prove completion.",
+    "Vesslo is handling the confirmed request. Terminal waiting and process exit do not prove completion.",
   verificationPending:
-    "The actual outcome is awaiting Vesslo's authoritative verification. Do not assume completion or resend the request.",
+    "Awaiting Vesslo verification. Completion is unconfirmed; do not resend the request.",
   completed:
-    "Vesslo reports authoritative verification for every original target. This confirms this request's result, not the app's current installed version indefinitely.",
+    "Verified by Vesslo for every target in this request. This is the recorded result, not a live version check.",
   failed:
-    "At least one target failed, or results are mixed. A completed target must not hide another target's failure.",
+    "At least one target failed, or results are mixed. Check each target below.",
   cancelled:
-    "Vesslo reports cancellation before execution or cancellation that its engine determined was safe.",
+    "Vesslo reports cancellation before execution or a safe cancellation during its workflow.",
 };
 export function requestIdentityMarkdown(request: HandoffRequest): string {
   const text = markdownText;
@@ -40,12 +40,79 @@ export function receiptMarkdown(
 ): string {
   const text = markdownText;
   const targets = receipt.targets
-    .map((entry, index) => {
-      const target = entry.target;
-      return `### Target ${index + 1}: ${text(target.caskToken)}\n\n**${current ? "Result" : "Last recorded result"}:** ${RECEIPT_PHASE_LABELS[entry.phase]}\n\n${entry.reason ? `**Reason:** ${text(entry.reason)}\n\n` : ""}**App ID:** ${text(target.appId)}\n\n**Bundle ID:** ${text(target.bundleId)}\n\n**Path:** ${text(target.canonicalPath)}\n\n**Requested version change:** ${text(target.installedVersion)} → ${text(target.expectedTargetVersion)}${target.readinessEvidenceId ? `\n\n**Readiness evidence:** ${text(target.readinessEvidenceId)}` : ""}${entry.verificationRecordId ? `\n\n**Verification record:** ${text(entry.verificationRecordId)}` : ""}`;
-    })
+    .map(
+      (entry) =>
+        `${targetSummaryMarkdown(entry.target)}\n\n**${current ? "Result" : "Last recorded result"}:** ${RECEIPT_PHASE_LABELS[entry.phase]}${current && entry.phase === "completed" ? " · Verified by Vesslo" : ""}${entry.reason && entry.phase !== "completed" ? `\n\n**Reason:** ${text(entry.reason, 4096)}` : ""}`,
+    )
     .join("\n\n---\n\n");
-  return `# ${current ? RECEIPT_PHASE_LABELS[receipt.phase] : "Historical Receipt — Current Result Unconfirmed"}\n\n${current ? PHASE_EXPLANATIONS[receipt.phase] : "These are previously recorded results. They are not current confirmation."}\n\n${receipt.reason ? `**Request reason:** ${text(receipt.reason)}\n\n` : ""}${requestIdentityMarkdown(receipt.request)}\n\n**Receipt revision:** ${receipt.revision}\n\n**Received:** ${text(formatDate(receipt.receivedAt))}\n\n**Updated:** ${text(formatDate(receipt.updatedAt))}\n\n**Terminal retention expires:** ${text(formatDate(receipt.expiresAt))}\n\n${targets}`;
+  return `### ${current ? RECEIPT_PHASE_LABELS[receipt.phase] : "Historical Receipt"}\n\n${current ? PHASE_EXPLANATIONS[receipt.phase] : "Current result unconfirmed. These are previously recorded results."}\n\n${targets}\n\nUpdated ${text(formatDate(receipt.updatedAt))}${receipt.reason && receipt.phase !== "completed" ? `\n\n**Request reason:** ${text(receipt.reason, 4096)}` : ""}`;
+}
+
+function targetSummaryMarkdown(target: HandoffTarget): string {
+  const text = (value: string) => markdownText(value, 4096);
+  return `**${text(target.caskToken)}**\n\nRequested: ${text(target.installedVersion)} → ${text(target.expectedTargetVersion)}\n\n${text(target.canonicalPath)}`;
+}
+
+function targetIdentityMarkdown(target: HandoffTarget): string {
+  return `${targetSummaryMarkdown(target)}\n\n**App ID:** ${markdownText(target.appId)}\n\n**Bundle ID:** ${markdownText(target.bundleId, 4096)}${target.readinessEvidenceId ? `\n\n**Readiness evidence:** ${markdownText(target.readinessEvidenceId)}` : ""}`;
+}
+
+export function requestTechnicalMarkdown(request: HandoffRequest): string {
+  return `### Request Details\n\n${requestIdentityMarkdown(request)}\n\n**Created (original):** ${markdownText(request.createdAt)}\n\n${request.targets.map((target, index) => `### Target ${index + 1}\n\n${targetIdentityMarkdown(target)}`).join("\n\n---\n\n")}`;
+}
+
+export function receiptTechnicalMarkdown(
+  receipt: HandoffReceipt,
+  current = true,
+): string {
+  const targets = receipt.targets
+    .map(
+      (entry, index) =>
+        `### Target ${index + 1}\n\n${targetIdentityMarkdown(entry.target)}\n\n**${current ? "Result" : "Last recorded result"}:** ${RECEIPT_PHASE_LABELS[entry.phase]}${entry.reason ? `\n\n**Reason:** ${markdownText(entry.reason, 4096)}` : ""}${entry.verificationRecordId ? `\n\n**Verification record:** ${markdownText(entry.verificationRecordId)}` : ""}`,
+    )
+    .join("\n\n---\n\n");
+  return `### Receipt Details\n\n${current ? PHASE_EXPLANATIONS[receipt.phase] : "Historical receipt. Current result unconfirmed."}\n\n**${current ? "Result" : "Last recorded result"}:** ${RECEIPT_PHASE_LABELS[receipt.phase]}${receipt.reason ? `\n\n**Request reason:** ${markdownText(receipt.reason, 4096)}` : ""}\n\n${requestIdentityMarkdown(receipt.request)}\n\n**Created (original):** ${markdownText(receipt.request.createdAt)}\n\n**Receipt schema:** ${receipt.schemaVersion}\n\n**Receipt revision:** ${receipt.revision}\n\n**Received:** ${markdownText(receipt.receivedAt)}\n\n**Updated:** ${markdownText(receipt.updatedAt)}\n\n**Terminal retention expires:** ${markdownText(receipt.expiresAt)}\n\n${targets}`;
+}
+
+export function RequestTechnicalDetailsAction({
+  request,
+  markdown,
+  receipt,
+}: {
+  request: HandoffRequest;
+  markdown: string;
+  receipt?: HandoffReceipt;
+}) {
+  return (
+    <Action.Push
+      title="View Technical Details"
+      icon={Icon.Document}
+      target={
+        <Detail
+          navigationTitle="Request Technical Details"
+          markdown={`${markdown}\n\nRead-only details. This view never resends or executes a request.`}
+          actions={
+            <ActionPanel>
+              <Action.CopyToClipboard
+                title="Copy Request ID"
+                content={request.requestId}
+              />
+              <Action.CopyToClipboard
+                title="Copy Request JSON"
+                content={JSON.stringify(request, null, 2)}
+              />
+              {receipt && (
+                <Action.CopyToClipboard
+                  title="Copy Receipt JSON"
+                  content={JSON.stringify(receipt, null, 2)}
+                />
+              )}
+            </ActionPanel>
+          }
+        />
+      }
+    />
+  );
 }
 export function ReloadReceiptsAction({
   refresh,
@@ -66,9 +133,12 @@ export function ReloadReceiptsAction({
 export function HandoffRequestStatus({ request }: { request: HandoffRequest }) {
   const { state, isLoading, refresh } = useHandoffReceipts();
   const bound = bindReceipt(state, request);
+  const warning = bound.reason
+    ? `> ${markdownText(bound.reason, 4096)}\n\n`
+    : "";
   const markdown = bound.receipt
-    ? `${bound.reason ? `> ${bound.reason}\n\n` : ""}${receiptMarkdown(bound.receipt, bound.status === "current")}`
-    : `# ${bound.status === "conflict" ? "Request Conflict" : bound.status === "unavailable" ? "Receipt Unavailable" : "Awaiting Receipt"}\n\n${bound.reason}\n\n${requestIdentityMarkdown(request)}\n\n${request.targets.map((target, index) => `### Requested Target ${index + 1}\n\n${markdownText(target.caskToken)} · ${markdownText(target.bundleId)}\n\n${markdownText(target.canonicalPath)}\n\n${markdownText(target.installedVersion)} → ${markdownText(target.expectedTargetVersion)}${target.readinessEvidenceId ? `\n\n**Readiness evidence:** ${markdownText(target.readinessEvidenceId)}` : ""}`).join("\n\n")}\n\nThis view never resends or executes a request.`;
+    ? `${warning}${receiptMarkdown(bound.receipt, bound.status === "current")}`
+    : `### ${bound.status === "conflict" ? "Request Conflict" : bound.status === "unavailable" ? "Receipt Unavailable" : "Awaiting Receipt"}\n\n${warning}${request.targets.map(targetSummaryMarkdown).join("\n\n---\n\n")}\n\nThis view never resends or executes a request.`;
   return (
     <Detail
       navigationTitle="Vesslo Request Status"
@@ -77,6 +147,11 @@ export function HandoffRequestStatus({ request }: { request: HandoffRequest }) {
       actions={
         <ActionPanel>
           <ReloadReceiptsAction refresh={refresh} />
+          <RequestTechnicalDetailsAction
+            request={request}
+            receipt={bound.receipt ?? undefined}
+            markdown={`${warning}${bound.receipt ? receiptTechnicalMarkdown(bound.receipt, bound.status === "current") : requestTechnicalMarkdown(request)}`}
+          />
           <Action.CopyToClipboard
             title="Copy Request ID"
             content={request.requestId}

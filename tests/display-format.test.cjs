@@ -16,6 +16,7 @@ Module._load = function (request) {
   if (request === "@raycast/api")
     return {
       Color: { Red: "red", Orange: "orange", SecondaryText: "secondary" },
+      Icon: { Warning: "Warning" },
     };
   return originalLoad.apply(this, arguments);
 };
@@ -185,8 +186,70 @@ test("audit reasons and source identity are escaped, bounded and safe for protot
   assert.ok(detail.includes("Unknown (invalid date)"));
   assert.ok(detail.length < 13000);
   const tooltip = auditWarningAccessory(app).tooltip;
-  assert.ok(tooltip.length < 700);
+  assert.ok(tooltip.length < 2800);
   assert.equal(tooltip.includes("\u202E"), false);
+});
+
+test("one compact warning retains every active reason category and the action restriction", () => {
+  const app = {
+    ...fixture,
+    securityReasons: ["unsignedApp", "notNotarized"],
+    updateHealthStatus: "stale",
+    updateHealthReasons: ["updateCheckStale"],
+    updateHealthSource: "Sparkle",
+    updateHealthSourceIdentity: "com.example.source",
+    managementReasons: ["noMemoOrTags", "subscriptionApp", "updateAvailable"],
+  };
+  const restriction =
+    "The selected Homebrew proof expired. Reload before reviewing.";
+  const warning = auditWarningAccessory(app, restriction);
+  assert.equal(warning.text, "Security");
+  assert.equal(warning.icon.tintColor, "red");
+  assert.equal(warning.tag, undefined);
+  for (const reason of [
+    "Unsigned app",
+    "Not notarized",
+    "Update check is stale",
+    "Sparkle",
+    "com.example.source",
+    "No memo or tags",
+    "Subscription app",
+    restriction,
+  ])
+    assert.ok(warning.tooltip.includes(reason), reason);
+  assert.equal(warning.tooltip.includes("updateAvailable"), false);
+  const detail = auditReviewMarkdown(app, "review");
+  for (const section of [
+    "Security Review",
+    "Update Source Review",
+    "Management Review",
+  ])
+    assert.ok(detail.includes(section), section);
+});
+
+test("compact warnings use the highest active severity without duplicating Review labels", () => {
+  const source = {
+    ...fixture,
+    updateHealthStatus: "stale",
+    updateHealthReasons: ["updateCheckStale"],
+  };
+  assert.equal(
+    auditWarningAccessory(source, "Reload required").text,
+    "Source check",
+  );
+  assert.equal(auditWarningAccessory(source).icon.tintColor, "orange");
+  const management = { ...fixture, managementReasons: ["noMemoOrTags"] };
+  assert.equal(auditWarningAccessory(management).text, "Review");
+  assert.equal(auditWarningAccessory(management).icon.tintColor, "secondary");
+  assert.equal(
+    auditWarningAccessory(management, "Reload required").icon.tintColor,
+    "orange",
+  );
+  assert.equal(auditWarningAccessory(fixture), null);
+  assert.equal(
+    auditWarningAccessory(fixture, "Reload required").text,
+    "Review",
+  );
 });
 
 test("Review details prioritize reasons while Updates retain metadata first", () => {

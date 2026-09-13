@@ -1,4 +1,4 @@
-import { Color, List } from "@raycast/api";
+import { Color, Icon, List } from "@raycast/api";
 import { VessloApp } from "../types";
 import {
   activeManagementReasons,
@@ -48,12 +48,11 @@ export function hasAuditReview(app: VessloApp): boolean {
 
 export function auditWarningAccessory(
   app: VessloApp,
+  policyReviewReason: string | null = null,
 ): List.Item.Accessory | null {
+  const explanations: string[] = [];
   if (app.securityReasons.length > 0) {
-    return {
-      tag: { value: "Security", color: Color.Red },
-      tooltip: `Security review: ${reasonList(app.securityReasons)}`,
-    };
+    explanations.push(`Security review: ${reasonList(app.securityReasons)}`);
   }
 
   if (isActiveUpdateHealth(app)) {
@@ -62,21 +61,39 @@ export function auditWarningAccessory(
       app.updateHealthSource,
       app.updateHealthSourceIdentity,
     ].filter((value): value is string => value !== null && value.length > 0);
-    return {
-      tag: { value: "Source Check", color: Color.Orange },
-      tooltip: `Update source review: ${displayText(details.join(" • "), 640)}`,
-    };
+    explanations.push(
+      `Update source review: ${displayText(details.join(" • "), 640)}`,
+    );
   }
 
   const managementReasons = activeManagementReasons(app);
   if (managementReasons.length > 0) {
-    return {
-      tag: { value: "Review", color: Color.SecondaryText },
-      tooltip: `Review in Vesslo: ${reasonList(managementReasons)}`,
-    };
+    explanations.push(`Management review: ${reasonList(managementReasons)}`);
   }
 
-  return null;
+  if (policyReviewReason) {
+    explanations.push(`Action review: ${displayText(policyReviewReason, 640)}`);
+  }
+  if (explanations.length === 0) return null;
+
+  return {
+    text:
+      app.securityReasons.length > 0
+        ? "Security"
+        : isActiveUpdateHealth(app)
+          ? "Source check"
+          : "Review",
+    icon: {
+      source: Icon.Warning,
+      tintColor:
+        app.securityReasons.length > 0
+          ? Color.Red
+          : isActiveUpdateHealth(app) || policyReviewReason
+            ? Color.Orange
+            : Color.SecondaryText,
+    },
+    tooltip: explanations.join("\n"),
+  };
 }
 
 export function auditReviewMarkdown(

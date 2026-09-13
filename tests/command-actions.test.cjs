@@ -21,6 +21,7 @@ let refreshCount = 0;
 const api = {
   Icon: new Proxy({}, { get: (_, key) => key }),
   Color: new Proxy({}, { get: (_, key) => key }),
+  Detail: "Detail",
   List: Object.assign("List", {}),
 };
 api.List = Object.assign((props) => React.createElement("List", props), {
@@ -371,7 +372,7 @@ test("count mismatch blocks update actions and is visible in every command", () 
   for (const [name, Command] of commands) {
     const rows = collect(React.createElement(Command), "List.Item");
     const notice = rows.find((row) => row.id === "vesslo-data-status");
-    assert.equal(notice.title, "Vesslo Update Counts Do Not Match", name);
+    assert.equal(notice.title, "Update Count Mismatch", name);
     assert.ok(!appActions(Command).includes("Update in Vesslo"), name);
     assert.ok(!appActions(Command).includes("Open in App Store"), name);
   }
@@ -383,7 +384,7 @@ test("unverifiable counts remain visible as a review notice even when browsing i
   for (const [name, Command] of commands) {
     const rows = collect(React.createElement(Command), "List.Item");
     const notice = rows.find((row) => row.id === "vesslo-data-status");
-    assert.equal(notice.title, "Vesslo Update Count Cannot Be Verified", name);
+    assert.equal(notice.title, "Update Count Unverified", name);
     assert.match(notice.subtitle, /does not provide an update count/, name);
     assert.ok(!appActions(Command).includes("Update in Vesslo"), name);
   }
@@ -440,7 +441,7 @@ test("bulk keeps exact selected targets when a search hides rows and clears stal
   assert.equal(
     collect(tree, "List.Item").find((r) => r.id === "vesslo-homebrew-review")
       .title,
-    "2 apps selected for review",
+    "2 selected",
   );
   const review = collect(tree, "Action.Push").find(
     (a) => a.title === "Review 2 apps in Vesslo",
@@ -499,12 +500,23 @@ test("schema 3 keeps global failure visible while checked Homebrew targets retai
   const tree = React.createElement(Command);
   const rows = collect(tree, "List.Item");
   const notice = rows.find((row) => row.id === "vesslo-data-status");
-  assert.equal(notice.title, "Vesslo Update Check Failed");
+  assert.equal(notice.title, "Full Update Check Failed");
+  assert.equal(notice.subtitle, "Other update routes are blocked");
+  assert.equal(notice.accessories[0].text, "2 Homebrew ready");
+  assert.equal(notice.accessories[0].tag, undefined);
+  const checkDetails = collect(notice.actions, "Action.Push").find(
+    (action) => action.title === "View Check Details",
+  );
+  assert.ok(checkDetails);
   assert.match(
-    notice.subtitle,
+    checkDetails.target.props.markdown,
     /2 targets have current Homebrew source evidence/,
   );
-  assert.equal(notice.accessories[0].tag.value, "HOMEBREW CHECKED: 2");
+  assert.match(
+    checkDetails.target.props.markdown,
+    /separate from the total candidate count/,
+  );
+  assert.match(checkDetails.target.props.markdown, /failed/);
   const row = rows.find((row) => row.id === currentState.data.apps[0].id);
   assert.ok(
     collect(row.actions, "Action.Push").some(
@@ -519,9 +531,8 @@ test("schema 3 keeps global failure visible while checked Homebrew targets retai
   stateIndex = 0;
   const expired = collect(React.createElement(Command), "List.Item");
   assert.equal(
-    expired.find((row) => row.id === "vesslo-data-status").accessories[0].tag
-      .value,
-    "REVIEW ONLY",
+    expired.find((row) => row.id === "vesslo-data-status").accessories[0].text,
+    "Review only",
   );
   assert.ok(
     !collect(React.createElement(Command), "Action.Push").some(
@@ -582,7 +593,7 @@ test("bulk summary only advertises confirmation for a valid selection or current
   try {
     initialStates = [];
     currentState = readinessFixture();
-    assert.equal(renderSummary().accessories[0].tag.value, "CONFIRM IN VESSLO");
+    assert.equal(renderSummary().accessories[0].text, "Review in Vesslo");
     currentState.data.homebrewReadiness =
       currentState.data.homebrewReadiness.map(
         ({ evidenceId, checkedAt, expiresAt, ...entry }) => ({
@@ -592,9 +603,10 @@ test("bulk summary only advertises confirmation for a valid selection or current
         }),
       );
     let summary = renderSummary();
-    assert.equal(summary.title, "0 apps selected for review");
-    assert.equal(summary.accessories[0].tag.value, "REVIEW ONLY");
-    assert.equal(summary.accessories[0].tag.color, "Orange");
+    assert.equal(summary.title, "0 selected");
+    assert.equal(summary.accessories[0].text, "Review only");
+    assert.equal(summary.accessories[0].icon.tintColor, "Orange");
+    assert.equal(summary.accessories[0].tag, undefined);
     assert.ok(
       !collect(summary.actions, "Action").some(
         (action) => action.title === "Select Matching Apps",
@@ -605,22 +617,22 @@ test("bulk summary only advertises confirmation for a valid selection or current
     currentState.pathAvailability = Object.fromEntries(
       currentState.data.apps.map((app) => [app.path, "permissionDenied"]),
     );
-    assert.equal(renderSummary().accessories[0].tag.value, "REVIEW ONLY");
+    assert.equal(renderSummary().accessories[0].text, "Review only");
 
     currentState = readinessFixture();
     initialStates = ["no matching target"];
-    assert.equal(renderSummary().accessories[0].tag.value, "REVIEW ONLY");
+    assert.equal(renderSummary().accessories[0].text, "Review only");
     const originalData = currentState.data;
     initialStates = [
       "no matching target",
       false,
       { data: originalData, apps: [originalData.apps[0]] },
     ];
-    assert.equal(renderSummary().accessories[0].tag.value, "CONFIRM IN VESSLO");
+    assert.equal(renderSummary().accessories[0].text, "Review in Vesslo");
     Date.now = () => Date.parse(originalData.homebrewReadiness[0].expiresAt);
     summary = renderSummary();
     assert.equal(currentState.data, originalData);
-    assert.equal(summary.accessories[0].tag.value, "REVIEW ONLY");
+    assert.equal(summary.accessories[0].text, "Review only");
     assert.ok(
       !collect(summary.actions, "Action.Push").some(
         (action) => action.title === "Review 1 app in Vesslo",
@@ -633,15 +645,186 @@ test("bulk summary only advertises confirmation for a valid selection or current
   }
 });
 
+test("compact app rows retain security and update meaning without repeated status or source pills", () => {
+  initialStates = [];
+  currentState = fixture({ sources: ["Brew", "Homebrew", "Sparkle"] });
+  const rowFor = (Command) => {
+    stateIndex = 0;
+    return collect(React.createElement(Command), "List.Item").find(
+      (row) => row.id === appID,
+    );
+  };
+  const searchRow = rowFor(commands[0][1]);
+  assert.ok(
+    searchRow.accessories.some((item) => item.text === "Homebrew · Sparkle"),
+  );
+  assert.ok(
+    searchRow.accessories.some((item) => item.tooltip === "Update available"),
+  );
+  assert.equal(
+    searchRow.accessories.filter((item) => item.text === "Security").length,
+    1,
+  );
+  assert.ok(searchRow.accessories.every((item) => !item.tag));
+
+  const bulkRow = rowFor(commands[3][1]);
+  assert.ok(bulkRow.accessories.some((item) => item.text === "1.0 → 2.0"));
+  assert.equal(
+    bulkRow.accessories.some((item) => item.tooltip === "Update available"),
+    false,
+  );
+  assert.equal(
+    bulkRow.accessories.some((item) =>
+      /Homebrew|Sparkle/.test(item.text ?? ""),
+    ),
+    false,
+  );
+  assert.equal(
+    bulkRow.accessories.filter((item) => item.text === "Security").length,
+    1,
+  );
+  for (const source of ["Homebrew", "Sparkle"])
+    assert.ok(bulkRow.detail.props.markdown.includes(source), source);
+
+  currentState.status = "stale";
+  const staleRow = rowFor(commands[0][1]);
+  const warning = staleRow.accessories.find((item) => item.text === "Security");
+  assert.match(warning.tooltip, /Unsigned app/);
+  assert.match(warning.tooltip, /Action review:/);
+  assert.equal(
+    staleRow.accessories.some((item) => item.text === "Review"),
+    false,
+  );
+  stateIndex = 0;
+});
+
+test("candidate totals stay distinct from currently checked Homebrew targets", () => {
+  initialStates = [];
+  stateIndex = 0;
+  currentState = readinessFixture();
+  currentState.data.homebrewReadiness[1].state = "failed";
+  currentState.data.homebrewReadiness[1].reason = "sourceFailed";
+  const tree = commands[3][1]();
+  const notice = collect(tree, "List.Item").find(
+    (row) => row.id === "vesslo-data-status",
+  );
+  assert.equal(notice.accessories[0].text, "1 Homebrew ready");
+  const candidates = collect(tree, "List.Section").find(
+    (section) => section.title === "Homebrew candidates",
+  );
+  assert.equal(candidates.subtitle, "2 apps");
+  stateIndex = 0;
+});
+
+test("compact selected indicators preserve the 16-target limit and allow removing selected apps", async () => {
+  currentState = fixture();
+  const apps = Array.from({ length: 17 }, (_, index) => ({
+    ...currentState.data.apps[0],
+    id: uuid(`compact-limit-${index}`),
+    name: `Example ${index}`,
+    bundleId: `com.example.limit${index}`,
+    path: `/Applications/Example${index}.app`,
+    homebrewCask: `example-${index}`,
+  }));
+  currentState.data = schema2Data(apps);
+  currentState.pathAvailability = Object.fromEntries(
+    apps.map((app) => [app.path, "available"]),
+  );
+  initialStates = [
+    "",
+    false,
+    { data: currentState.data, apps: apps.slice(0, 16) },
+  ];
+  stateIndex = 0;
+  stateChanges = [];
+  const tree = commands[3][1]();
+  const rows = collect(tree, "List.Item", [], false);
+  const selected = rows.find((row) => row.id === apps[0].id);
+  assert.ok(
+    selected.accessories.some(
+      (item) =>
+        item.icon?.source === "CheckCircle" &&
+        item.tooltip === "Selected for review in Vesslo",
+    ),
+  );
+  const summary = rows.find((row) => row.id === "vesslo-homebrew-review");
+  assert.equal(summary.title, "16 selected");
+  assert.ok(
+    collect(summary.actions, "Action.Push").some(
+      (action) => action.title === "Review 16 apps in Vesslo",
+    ),
+  );
+  assert.equal(
+    collect(summary.actions, "Action").some(
+      (action) => action.title === "Select Matching Apps",
+    ),
+    false,
+  );
+  const last = rows.find((row) => row.id === apps[16].id);
+  await collect(last.actions, "Action")
+    .find((action) => action.title === "Select for Review")
+    .onAction();
+  assert.ok(
+    stateChanges.some(
+      ([index, value]) =>
+        index === 3 &&
+        value === "One review request can contain at most 16 apps.",
+    ),
+  );
+  assert.equal(
+    stateChanges.some(([index]) => index === 2),
+    false,
+  );
+  await collect(selected.actions, "Action")
+    .find((action) => action.title === "Remove from Selection")
+    .onAction();
+  const remaining = stateChanges.find(([index]) => index === 2)[1];
+  assert.equal(remaining.apps.length, 15);
+  assert.equal(
+    remaining.apps.some((app) => app.id === apps[0].id),
+    false,
+  );
+  initialStates = [];
+  stateIndex = 0;
+});
+
+test("an empty Homebrew candidate list stays review-only without selectable or executable actions", () => {
+  currentState = fixture();
+  currentState.data = schema2Data([]);
+  currentState.pathAvailability = {};
+  initialStates = [];
+  stateIndex = 0;
+  const tree = commands[3][1]();
+  const rows = collect(tree, "List.Item");
+  const summary = rows.find((row) => row.id === "vesslo-homebrew-review");
+  assert.equal(summary.title, "0 selected");
+  assert.equal(summary.accessories[0].text, "Review only");
+  assert.ok(rows.some((row) => row.id === "vesslo-homebrew-empty"));
+  assert.equal(
+    collect(tree, "AnyAction").some((action) =>
+      /Select Matching|Review \d+ apps? in Vesslo|Update All|Install/.test(
+        action.title,
+      ),
+    ),
+    false,
+  );
+  stateIndex = 0;
+});
+
 test("receipt details preserve readiness evidence and mark V1 records as read-only history", () => {
-  const { receiptMarkdown, requestIdentityMarkdown } = require(
+  const {
+    receiptMarkdown,
+    receiptTechnicalMarkdown,
+    requestIdentityMarkdown,
+  } = require(
     join(process.env.VESSLO_TEST_BUILD, "components/HandoffRequestStatus.js"),
   );
   const receipt = receiptV2Fixture().receipts[0];
   const markdown = receiptMarkdown(receipt);
-  assert.match(markdown, /Request schema:\*\* 2/);
+  const technical = receiptTechnicalMarkdown(receipt);
+  assert.match(technical, /Request schema:\*\* 2/);
   for (const target of receipt.request.targets)
-    assert.ok(markdown.includes(target.readinessEvidenceId));
+    assert.ok(technical.includes(target.readinessEvidenceId));
   assert.match(markdown, /Execution and completion are not confirmed/);
   const legacy = { ...receipt.request, schemaVersion: 1 };
   assert.match(

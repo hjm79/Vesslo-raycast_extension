@@ -3,10 +3,17 @@ import { useState } from "react";
 import {
   RECEIPT_PHASE_LABELS,
   receiptMarkdown,
+  receiptTechnicalMarkdown,
   ReloadReceiptsAction,
+  RequestTechnicalDetailsAction,
 } from "./components/HandoffRequestStatus";
 import { HandoffReceipt } from "./utils/receipt-contract";
-import { displayText, formatDate } from "./utils/display-format";
+import {
+  countLabel,
+  displayText,
+  formatDate,
+  markdownText,
+} from "./utils/display-format";
 import { useHandoffReceipts } from "./utils/useHandoffReceipts";
 import { useVessloData } from "./utils/useVessloData";
 
@@ -43,7 +50,7 @@ export default function HandoffRequests() {
   const groups = publisherSession
     ? [
         {
-          title: "Current Export Session",
+          title: "Current Session",
           records: records.filter(
             (receipt) =>
               receipt.request.publisherSessionId.toLowerCase() ===
@@ -51,7 +58,7 @@ export default function HandoffRequests() {
           ),
         },
         {
-          title: "Earlier Publisher Session — History",
+          title: "Earlier Sessions",
           records: records.filter(
             (receipt) =>
               receipt.request.publisherSessionId.toLowerCase() !==
@@ -59,10 +66,11 @@ export default function HandoffRequests() {
           ),
         },
       ]
-    : [{ title: "Publisher Session Unverified — History", records }];
+    : [{ title: "Session Unverified", records }];
   const expired = state.expiredReceipts.filter(match);
   const item = (receipt: HandoffReceipt, expired: boolean) => {
     const current = state.status === "ready" && !expired;
+    const warning = `${state.status !== "ready" ? `> ${markdownText(state.reason ?? "Receipt read is unavailable.", 4096)} Cached results are not current confirmation.\n\n` : ""}${expired ? "> Expired receipt. This is history, not current confirmation.\n\n" : ""}${receipt.request.publisherSessionId.toLowerCase() !== publisherSession ? "> This request belongs to a different or unverified export session. It is request history and must not authorize a new request.\n\n" : ""}`;
     return (
       <List.Item
         key={receipt.request.requestId}
@@ -71,7 +79,10 @@ export default function HandoffRequests() {
           receipt.targets.map((entry) => entry.target.caskToken).join(", "),
           160,
         )}
-        subtitle={displayText(receipt.request.requestId, 36)}
+        subtitle={new Date(receipt.updatedAt).toLocaleTimeString(undefined, {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
         icon={
           current && receipt.phase === "completed"
             ? Icon.CheckCircle
@@ -82,19 +93,24 @@ export default function HandoffRequests() {
             text: !current
               ? expired
                 ? "Expired history"
-                : "Cached — unconfirmed"
+                : "Cached · Unconfirmed"
               : RECEIPT_PHASE_LABELS[receipt.phase],
             tooltip: formatDate(receipt.updatedAt) ?? "Unknown time",
           },
         ]}
         detail={
           <List.Item.Detail
-            markdown={`${state.status !== "ready" ? `> ${state.reason ?? "Receipt read is unavailable."} Cached results are not current confirmation.\n\n` : ""}${receipt.request.publisherSessionId.toLowerCase() !== publisherSession ? "> This request belongs to a different or unverified export session. It is request history and must not authorize a new request.\n\n" : ""}${receiptMarkdown(receipt, current)}\n\nThis read-only history never retries, deletes, or executes requests.`}
+            markdown={`${warning}${receiptMarkdown(receipt, current)}\n\nThis read-only history never retries, deletes, or executes requests.`}
           />
         }
         actions={
           <ActionPanel>
             <ReloadReceiptsAction refresh={refresh} />
+            <RequestTechnicalDetailsAction
+              request={receipt.request}
+              receipt={receipt}
+              markdown={`${warning}${receiptTechnicalMarkdown(receipt, current)}`}
+            />
             <Action.CopyToClipboard
               title="Copy Request ID"
               content={receipt.request.requestId}
@@ -111,7 +127,7 @@ export default function HandoffRequests() {
       filtering={false}
       searchText={query}
       onSearchTextChange={setQuery}
-      searchBarPlaceholder="Search Vesslo request receipts by ID, target, result, or reason"
+      searchBarPlaceholder="Search requests"
     >
       {state.status !== "ready" && state.status !== "loading" && (
         <List.Item
@@ -121,7 +137,7 @@ export default function HandoffRequests() {
           icon={Icon.Warning}
           detail={
             <List.Item.Detail
-              markdown={`# Receipt Read Unavailable\n\n${state.reason}\n\nPreviously observed results, if shown, are cached history. Missing receipts do not mean acceptance or completion.`}
+              markdown={`### Receipt Read Unavailable\n\n${markdownText(state.reason, 4096)}\n\nPreviously observed results, if shown, are cached history. Missing receipts do not mean acceptance or completion.`}
             />
           }
           actions={
@@ -135,13 +151,13 @@ export default function HandoffRequests() {
         <List.Section
           key={group.title}
           title={group.title}
-          subtitle={`${group.records.length} requests · Read-only`}
+          subtitle={`${countLabel(group.records.length, "request")} · Read-only`}
         >
           {group.records.map((receipt) => item(receipt, false))}
         </List.Section>
       ))}
       {expired.length > 0 && (
-        <List.Section title="Expired Terminal Receipts — History Only">
+        <List.Section title="Expired History">
           {expired.map((receipt) => item(receipt, true))}
         </List.Section>
       )}

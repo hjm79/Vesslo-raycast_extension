@@ -149,29 +149,32 @@ export default function BulkHomebrewUpdate() {
       filtering={false}
       searchText={searchText}
       onSearchTextChange={setSearchText}
-      searchBarPlaceholder="Search Homebrew candidates to select for review…"
+      searchBarPlaceholder="Search Homebrew candidates…"
     >
       <DataStateNotice state={state} refresh={refresh} />
       <List.Section title="Homebrew Review">
         <List.Item
           id="vesslo-homebrew-review"
           icon={Icon.CheckList}
-          title={`${countLabel(selected.length)} selected for review`}
+          title={`${selected.length} selected`}
           subtitle={displayText(
             selectionError ??
-              (selectionChanged
-                ? selectionChanged
-                : `${countLabel(visible.length)} shown of ${bulk.candidates.length} · Maximum 16 per request`),
+              (selectionChanged ? selectionChanged : "Select up to 16 apps"),
           )}
           accessories={[
             {
-              tag: {
-                value: hasReviewableTargets
-                  ? "CONFIRM IN VESSLO"
-                  : "REVIEW ONLY",
-                color: hasReviewableTargets ? Color.Blue : Color.Orange,
+              text: hasReviewableTargets ? "Review in Vesslo" : "Review only",
+              icon: {
+                source: hasReviewableTargets ? Icon.CheckList : Icon.Info,
+                tintColor: hasReviewableTargets
+                  ? Color.SecondaryText
+                  : Color.Orange,
               },
-              tooltip: bulk.reason,
+              tooltip:
+                selectionError ??
+                selectionChanged ??
+                bulk.reason ??
+                "Vesslo asks for confirmation before updating.",
             },
           ]}
           detail={
@@ -187,7 +190,12 @@ export default function BulkHomebrewUpdate() {
       </List.Section>
       {visible.length > 0 ? (
         <List.Section
-          title={`Matching Candidates · ${countLabel(visible.length)}`}
+          title="Homebrew candidates"
+          subtitle={
+            visible.length === bulk.candidates.length
+              ? countLabel(visible.length)
+              : `${visible.length} of ${countLabel(bulk.candidates.length)}`
+          }
         >
           {visible.map((app) => {
             const isSelected = selected.some((item) => item.id === app.id);
@@ -199,6 +207,7 @@ export default function BulkHomebrewUpdate() {
                 app={app}
                 state={state}
                 showUpdateDetails
+                presentation="homebrew"
                 onRefresh={refresh}
                 selectedForReview={isSelected}
                 leadingActions={

@@ -29,6 +29,7 @@ interface SharedAppListItemProps {
   showUpdateDetails?: boolean;
   showReviewDetails?: boolean;
   reviewOnly?: boolean;
+  presentation?: "default" | "homebrew";
 }
 
 export function SharedAppListItem({
@@ -45,6 +46,7 @@ export function SharedAppListItem({
   showUpdateDetails = false,
   showReviewDetails = false,
   reviewOnly = false,
+  presentation = "default",
 }: SharedAppListItemProps) {
   const subtitle = [
     app.version,
@@ -56,18 +58,15 @@ export function SharedAppListItem({
 
   const accessories: List.Item.Accessory[] = [];
   if (selectedForReview)
-    accessories.push({ tag: { value: "SELECTED", color: Color.Blue } });
+    accessories.push({
+      icon: { source: Icon.CheckCircle, tintColor: Color.Blue },
+      tooltip: "Selected for review in Vesslo",
+    });
   const hasUpdate = isUpdatableApp(app);
   const policy = resolveAppActions(app, state);
   if (showUpdateDetails) {
     accessories.push({
       text: `${displayText(app.version ?? "Unknown", 80)} → ${displayText(app.targetVersion ?? "Review", 80)}`,
-    });
-  }
-  if (policy.reviewReason) {
-    accessories.push({
-      tag: { value: "REVIEW", color: Color.Orange },
-      tooltip: displayText(policy.reviewReason, 640),
     });
   }
 
@@ -112,30 +111,25 @@ export function SharedAppListItem({
     accessories.push({ icon: { source: icon, tintColor: color }, tooltip });
   });
 
-  // Update badge
-  if (hasUpdate && !reviewOnly) {
-    accessories.push({ tag: { value: "UPDATE", color: Color.Green } });
+  if (hasUpdate && !reviewOnly && !showUpdateDetails) {
+    accessories.push({
+      icon: { source: Icon.ArrowUpCircle, tintColor: Color.Green },
+      tooltip: "Update available",
+    });
   }
 
-  const auditAccessory = auditWarningAccessory(app);
+  const auditAccessory = auditWarningAccessory(app, policy.reviewReason);
   if (auditAccessory) {
     accessories.push(auditAccessory);
   }
 
-  // Source badges
-  [
-    ...new Set((reviewOnly ? [] : app.sources.slice(0, 20)).map(sourceLabel)),
-  ].forEach((source) => {
-    const color =
-      source === "Homebrew"
-        ? Color.Orange
-        : source === "App Store"
-          ? Color.Blue
-          : source === "Sparkle"
-            ? Color.Green
-            : Color.SecondaryText;
-    accessories.push({ tag: { value: source, color } });
-  });
+  const sources = [...new Set(app.sources.slice(0, 20).map(sourceLabel))];
+  if (!reviewOnly && presentation !== "homebrew" && sources.length > 0) {
+    accessories.push({
+      text: displayText(sources.join(" · "), 160),
+      tooltip: `Update sources: ${displayText(sources.join(", "), 640)}`,
+    });
+  }
 
   // Icon
   const iconPath = installedAppIconPath(app, state);

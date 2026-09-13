@@ -331,9 +331,9 @@ test("actual accepted receipts bind to generated requests and never display veri
       request.targets,
     );
     const rendered = receiptMarkdown(bound.receipt);
-    assert.match(rendered, /^# Accepted — Awaiting Vesslo Review/);
+    assert.match(rendered, /^### Awaiting Review/);
     assert.match(rendered, /Execution and completion are not confirmed/);
-    assert.doesNotMatch(rendered, /Completed — Verified by Vesslo/);
+    assert.doesNotMatch(rendered, /Verified by Vesslo/);
   }
 });
 
@@ -405,8 +405,8 @@ test("closed receipts preserve cancellation for both requests and do not imply i
       request.targets,
     );
     const rendered = receiptMarkdown(bound.receipt);
-    assert.match(rendered, /^# Cancelled/);
-    assert.doesNotMatch(rendered, /Completed — Verified by Vesslo/);
+    assert.match(rendered, /^### Cancelled/);
+    assert.doesNotMatch(rendered, /Verified by Vesslo/);
   }
 });
 
@@ -437,6 +437,6 @@ test("historical clocks distinguish expired request admission from retained term
   assert.equal(bound.status, "expired");
   assert.equal(bound.receipt.phase, "cancelled");
   const rendered = receiptMarkdown(bound.receipt, false);
-  assert.match(rendered, /^# Historical Receipt — Current Result Unconfirmed/);
-  assert.doesNotMatch(rendered, /^# Completed/);
+  assert.match(rendered, /^### Historical Receipt\n\nCurrent result unconfirmed/);
+  assert.doesNotMatch(rendered, /Verified by Vesslo/);
 });
