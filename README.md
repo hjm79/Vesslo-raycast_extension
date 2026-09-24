@@ -8,14 +8,14 @@ Search your Vesslo app library, review updates and findings, and follow Homebrew
 
 [Website](https://vesslo.top/vesslo) · [Vesslo for macOS](https://github.com/hjm79/Vesslo-MacAppManager) · [Raycast Store](https://www.raycast.com/hjm79/vesslo)
 
-> **Update candidate — September 24, 2026:** This README describes the proposed seven-command update. The public Vesslo 2.0.1 (28) download does not provide the new Homebrew review and receipt contracts. Vesslo 2.1.0 (30) is still an unreleased companion candidate, not an available minimum version. A compatible public companion release is required before this extension update is ready for Store review.
+> **Requires Vesslo 2.1.0 (Build 30) or later on macOS 13 or later.** [Download Vesslo 2.1.0](https://github.com/hjm79/Vesslo-MacAppManager-release/releases/download/v2.1.0/Vesslo.dmg). Vesslo provides a 14-day trial; a license is required after the trial.
 
 ## Setup
 
-1. Use macOS 13 or later with Raycast and [Vesslo](https://vesslo.top/vesslo) installed. Vesslo is a separate paid companion app with a 14-day trial. No additional account, API key, or credential preference is required by this extension.
+1. Use macOS 13 or later with Raycast and [Vesslo 2.1.0 (Build 30) or later](https://github.com/hjm79/Vesslo-MacAppManager-release/releases/download/v2.1.0/Vesslo.dmg) installed. Vesslo is a separate paid companion app with a 14-day trial. No additional account, API key, or credential preference is required by this extension.
 2. Open Vesslo and let it load your app library. Vesslo automatically exports the library to `~/Library/Application Support/Vesslo/raycast_data.json`.
 3. Run the desired Vesslo command in Raycast. **Reload Vesslo Data (`⌘R`)** rereads the local export. To check for newer app versions, run an update check in Vesslo itself.
-4. For exact Homebrew review and request results, use a compatible companion that supplies those features. Until that companion is publicly available, this candidate must not be presented as fully usable with the current public download.
+4. For exact Homebrew review, run an update check in Vesslo before selecting targets in Raycast. Vesslo 2.1.0 (Build 30) provides the required review and receipt integration; each selected target must still have current readiness evidence.
 
 ## Commands
 
