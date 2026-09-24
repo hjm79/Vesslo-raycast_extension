@@ -1,10 +1,16 @@
 # Vesslo — Raycast Store Submission Draft
 
-Prepared on September 13, 2026 against extension HEAD `50196ab60fd8a7c973ba2ab45f6b31c1a29d5824`.
+Updated on September 24, 2026. The submission checkout is based on merge `23859961f723bd5bcea1a219fba22c40fc82eb7c`, which brings the current Store contribution into the existing extension work. The September 13 documentation baseline remains in commit `eb68461`.
 
-This prepares an update to the existing [Vesslo Store extension](https://www.raycast.com/hjm79/vesslo). No submission, upload, pull request, or Store publication was performed. Copy-ready text is separated from the author's remaining checks below. Historical validation is attributed to its existing report; this documentation pass did not rerun it.
+This prepares an update to the existing [Vesslo Store extension](https://www.raycast.com/hjm79/vesslo). The author has authorized the update submission and completed the official GitHub authentication. Upstream synchronization is complete; no update PR is open as of this preparation check. This does not establish Store acceptance or publication.
 
-The current public listing describes the earlier four-command integration, including direct Homebrew, Terminal, and `mas` actions and their old shortcuts. The proposed listing must replace those descriptions with the current Vesslo-owned review and receipt workflow. The [Vesslo companion product page](https://vesslo.top/vesslo) advertises a 14-day trial and purchase option; do not describe the companion as free. A public companion release containing the latest integration remains to be established. Submission stays on hold until that compatible public build and its setup/access requirements are confirmed.
+**Companion release blocker:** the [public Vesslo release](https://github.com/hjm79/Vesslo-MacAppManager-release/releases/latest) is 2.0.1 (28), which does not supply the new Homebrew review and receipt contracts. The app owner's current release notes describe 2.1.0 (30) as unreleased. Do not claim that either the public 2.0.1 download or a local version string guarantees these features. A publicly obtainable compatible companion and reproducible setup must be established before marking the extension ready for review. Preparing an external draft does not resolve this blocker.
+
+The public listing describes the earlier four-command integration, including direct Homebrew, Terminal, and `mas` actions and their old shortcuts. The proposed listing replaces those descriptions with Vesslo-owned review and receipts. The [companion product page](https://vesslo.top/vesslo) specifies macOS 13 or later, a 14-day trial, and a purchase option; the companion must not be described as free.
+
+Published history is retained: the upstream contribution's five dated changelog entries remain intact. Add the update entry above that history; do not replace the file with local unreleased notes or remove previous contributors' changes. Keep the detailed validation reports as historical evidence. The public README now focuses on setup and current commands rather than reproducing internal audit logs.
+
+Copy-ready text is separated from author-only status below. Historical app/runtime evidence remains attributed to its original report. The current API 2 candidate passed fresh automated validation on September 24; Store media, user distribution smoke, and submission remain separate gates.
 
 ## Copy-ready Store text
 
@@ -12,7 +18,7 @@ The current public listing describes the earlier four-command integration, inclu
 
 Search your Vesslo app library, review updates and findings, and follow Homebrew requests from Raycast.
 
-Use this sentence for the manifest description if approved. The longer text below is suitable for the README or a description requested during review; it does not imply a separate long-description manifest field. [Raycast manifest](https://developers.raycast.com/information/manifest).
+Use this sentence for the manifest description. The longer text below is suitable for the README or a description requested during review; it does not imply a separate long-description manifest field. [Raycast manifest](https://developers.raycast.com/information/manifest).
 
 ### Longer introduction
 
@@ -40,7 +46,7 @@ This updates the existing Vesslo extension with its current seven-command macOS 
 
 Vesslo supplies the inventory, eligibility, check state, and request results. The extension presents those records and hands supported actions to Vesslo or the App Store. It does not execute package-manager commands. The Homebrew flow revalidates the selected installations before opening Vesslo's confirmation UI, and its result view follows the original request rather than inferring success from a launched URL.
 
-The extension requires a separately installed compatible Vesslo companion. It has no extension account, API key, or custom credential preference. A publicly obtainable companion build and reproducible setup instructions must be identified before submission; the local tested version string alone is not the compatibility guarantee.
+The extension requires a separately installed compatible Vesslo companion. It has no extension account, API key, or custom credential preference. A publicly obtainable companion build and reproducible setup instructions are still required before this update is ready for review. The public 2.0.1 (28) build lacks the new contracts; the unreleased 2.1.0 (30) companion is not yet a reviewer download or an established minimum version.
 
 ### Screencast
 
@@ -50,9 +56,9 @@ For new commands, Raycast's current PR template requests a screencast; screensho
 
 ### Setup and review path
 
-1. Use macOS with Raycast and a compatible Vesslo companion installed. The [companion product page](https://vesslo.top/vesslo) offers a 14-day trial and purchase option; this draft does not establish which public download includes the required integration or which license access the reviewer will need.
+1. Use macOS 13 or later with Raycast and a compatible Vesslo companion installed. The [companion product page](https://vesslo.top/vesslo) offers a 14-day trial and purchase option; the current public 2.0.1 (28) download lacks the new integration. Confirm the compatible public download and reviewer access before marking the update ready for review.
 2. Open Vesslo, allow its normal inventory/export work to complete, and run an update check in Vesslo when testing update eligibility. The export is `~/Library/Application Support/Vesslo/raycast_data.json`; the receipt file is `~/Library/Application Support/Vesslo/raycast_receipts.json`.
-3. For the current Homebrew flow, verify export schema 3 and capabilities `homebrewReviewV2`, `homebrewTargetReadinessV1`, and `requestReceiptsV2`. It uses request/receipt schema 2. Older schema 2 integrations follow a separate, stricter compatibility path; unversioned data is browse-only. No minimum publicly released Vesslo version has been established by this preparation pass.
+3. For the current Homebrew flow, verify export schema 3 and capabilities `homebrewReviewV2`, `homebrewTargetReadinessV1`, and `requestReceiptsV2`. It uses request/receipt schema 2. Older schema 2 integrations follow a separate, stricter compatibility path; unversioned data is browse-only. No publicly released minimum version for these contracts has been established. The app owner's unreleased 2.1.0 (30) draft must not be substituted for a public download.
 4. Open a command and use **Reload Vesslo Data** (`⌘R`). This rereads files and does not initiate a fresh Vesslo scan or update check. Missing data should lead the reviewer back to Vesslo setup; an absent receipt is not an accepted request.
 5. Follow the command checks below using the reviewer's own app library or the documented isolated fixture harness. Synthetic fixtures demonstrate UI and policy behavior; they do not demonstrate a real update. Do not replace a user's operating export with a sample file.
 
@@ -82,9 +88,21 @@ Allow Homebrew readiness to expire without starting another check, then inspect 
 | Evidence | Recorded scope | Limit |
 | --- | --- | --- |
 | [Compact UI validation](../UI_COMPACT_2026-09-13.md) | 329/329 extension tests, strict TypeScript, source lint, seven-command distribution build; installed Raycast compact views and navigation. | Recorded previous runs and observations; no fresh test/build run in this documentation pass. |
-| [Installed validation](../INSTALLED_VALIDATION_2026-09-13.md) and current README | One real KeyCastr update from 0.10.5 to 0.11.1 with matching app receipt, physical bundle, and Homebrew metadata. | One concrete successful operation, not universal success across sources or apps. |
+| [Installed validation](../INSTALLED_VALIDATION_2026-09-13.md) and [compact UI validation](../UI_COMPACT_2026-09-13.md) | One real KeyCastr update from 0.10.5 to 0.11.1 with matching app receipt, physical bundle, and Homebrew metadata. | One concrete successful operation, not universal success across sources or apps. |
 | [Latest preflight-denial addendum](../UI_COMPACT_2026-09-13.md#addendum-local-app-applied-observed-preflight-denial) | Standalone probe observed initial `-1743`; Vesslo Test recovery UI replay passed 1/1 with zero skips/failures. | `denialSequenceVerified=false`; does not prove the fresh three-step denial sequence, installed Vesslo/`mas` TCC chain, or App Management denial. |
 | Local metadata inspection on September 13 | `assets/extension-icon.png` measures 512×512; existing six `metadata/vesslo-*.png` files each measure 2000×1250. | Dimensions alone do not approve their content or establish correspondence with the final compact UI. |
+
+### September 24 preparation status
+
+- Official GitHub authentication and Store contribution synchronization are complete. Merge `2385996` retains the existing extension commits and upstream contribution; the five previously published changelog entries remain unchanged.
+- The existing `hjm79/vesslo` contribution is the update destination. No open update PR was found in the current preparation check; recheck immediately before creation to avoid a duplicate.
+- The public README has been rewritten around setup, seven commands, request results, and local data. Machine-specific audit paths and contradictory historical completion paragraphs have been removed from that public entry point. Detailed reports remain in `docs/` and in Git history.
+- Companion compatibility is the release blocker described above. App release work belongs to the app owner; this extension preparation does not publish or replace the companion.
+- API/dependency commit `7b47011` updates `@raycast/api` to `^2.4.1`, React to `19.0.0`, React types to `19.0.10`, and Node types to `22.19.17`. The Store contribution's `brace-expansion: 5.0.9` override is retained. No functional source edit was required.
+- Fresh candidate validation passed: 329/329 tests, zero failures/skips; strict TypeScript; source ESLint; full Raycast lint (manifest, icons, metadata, ESLint, Prettier); and the seven-command distribution build. Logs are `/tmp/VessloRaycastStore-{typecheck,source-lint,tests,store-lint,build}-20260924.log` on the author's machine. These paths are author-only evidence, not reviewer setup.
+- `npm run build` applied the new distribution locally. All seven generated JavaScript command files match the installed runtime byte-for-byte. The entire prior 16-file extension runtime was copied and hash-verified before replacement. Source map output-path differences are not executable-code differences. This installation check does not substitute for user testing of the final distribution.
+- The new descriptive changelog entry uses `{PR_MERGE_DATE}`. All five upstream dated entries remain byte-for-byte identical. The complete former local development changelog is preserved in [the development archive](DEVELOPMENT_CHANGELOG_2026-09-13.md), as well as the untouched original development repository.
+- Current Store captures, user distribution smoke, and PR creation remain pending. No public review or publication has been claimed.
 
 ### Current screenshot boundary
 
@@ -92,21 +110,25 @@ The four selected compact-UI evidence captures are 750×475 JPEG images despite 
 
 Create 3–6 new current-UI Store captures at 2000×1250, 16:10, PNG. Use a consistent background/theme, exclude personal data, and keep the frame focused on the Raycast extension. Suggested coverage: Search Apps; View Updates; Bulk Homebrew Update selection; Review Apps; Deleted Apps or tags; Homebrew Requests. A Vesslo native confirmation screenshot is useful review evidence, but is not a Raycast-only Store screenshot. [Screenshot requirements](https://developers.raycast.com/basics/prepare-an-extension-for-store#screenshots).
 
-For Raycast's capture tool, configure **Window Capture** in Advanced preferences, open the extension in development mode, open the command, use the configured hotkey, and select **Save to Metadata**. The documentation's `⌘⇧⌥M` is an example configured hotkey, not a guaranteed default. Put other README-linked media in top-level `media/`. [Capture procedure](https://developers.raycast.com/basics/prepare-an-extension-for-store#adding-screenshots).
+In the installed Raycast 2.4.1 UI, **Capture Window** is under **Settings → Raycast → Commands**, rather than the Advanced location shown in older documentation. It initially had no hotkey. Automated input did not reliably record or delete the temporary binding; do not claim that current native Store captures were produced. User cleanup and capture remain pending. Open the extension command, use a correctly configured capture hotkey, and save the current UI using Raycast's metadata capture workflow. The documented `⌘⇧⌥M` is an example configured hotkey, not a guaranteed default. README-linked media belongs in top-level `media/`. [Capture procedure](https://developers.raycast.com/basics/prepare-an-extension-for-store#adding-screenshots).
 
 ### Submission checklist
 
-- [ ] Identify the publicly obtainable Vesslo build that supplies the documented contract; confirm its setup, OS requirements, and any companion license/access requirement. Do not invent a minimum version or reviewer credentials.
-- [ ] Update the existing [hjm79/vesslo listing](https://www.raycast.com/hjm79/vesslo), and recheck any open PR before creating a duplicate. The manifest currently says `name: vesslo`, `author: hjm79`, `license: MIT`, platforms `macOS`, categories `Applications` / `Productivity`. The live Store handle matches; confirm that the submitting account can maintain that contribution. [Manifest](https://developers.raycast.com/information/manifest).
-- [ ] Recheck the latest supported Raycast API before submission. The current manifest declares `^1.104.22`; this document neither upgrades it nor asserts that it is latest. Keep npm's committed lockfile. [Store preparation](https://developers.raycast.com/basics/prepare-an-extension-for-store#metadata-and-configuration).
-- [ ] Review the final icon in light/dark themes and replace obsolete Store screenshots. Keep only runtime assets in `assets/`, and verify all linked media and relative documentation links from the eventual destination checkout.
-- [ ] Adapt the latest changelog entries to Raycast's `## [Title] - {PR_MERGE_DATE}` format. Current newest entries use `— Unreleased`; this preparation did not rewrite them. [Version history](https://developers.raycast.com/basics/prepare-an-extension-for-store#version-history).
-- [ ] Prepare a public-facing README with the setup and seven commands above. Reconcile older status paragraphs and remove machine-local/private evidence links from the public-facing material; preserve detailed historical reports with clear scope where appropriate.
-- [ ] Run the current candidate's documented checks and full Store lint, then exercise that distribution build in Raycast. Record exact outcomes rather than checking boxes from historical results. Confirm hosted CI separately when the authorized PR exists.
-- [ ] Review the current [extension guidelines](https://manual.raycast.com/extensions-guidelines), including uniqueness, setup documentation, maintenance responsibility, and feedback handling. Finish the official PR's media and checklist before sending it.
-- [ ] Obtain the author's separate authorization to create/update the external PR. After review and merge, verify the updated live Store listing and install path against the submitted candidate.
+- [x] Confirm the author's authorization to create/update the external Store PR. The current request supplies it; no additional generic submission permission is required.
+- [x] Complete official GitHub authentication and pull the existing Store contribution before preparing the update. Preserve its five dated changelog entries and the existing implementation history.
+- [x] Prepare a public-facing README with setup and seven commands. Keep the prerelease companion boundary explicit and retain historical reports separately.
+- [ ] Identify a publicly obtainable compatible Vesslo build and confirm its setup, macOS requirement, and trial/license access for reviewers. Public 2.0.1 (28) does not satisfy the new contract; 2.1.0 (30) remains unreleased. Do not invent a minimum version or reviewer credentials.
+- [ ] Recheck open PRs immediately before creating or updating the existing [hjm79/vesslo listing](https://www.raycast.com/hjm79/vesslo). The manifest identifies `name: vesslo`, `author: hjm79`, `license: MIT`, macOS, and Applications / Productivity. Do not submit a new duplicate extension. [Manifest](https://developers.raycast.com/information/manifest).
+- [x] Complete the current API/dependency review: API `^2.4.1`, React `19.0.0`, aligned types and committed npm lockfile in `7b47011`. Preserve the upstream security override. [Store preparation](https://developers.raycast.com/basics/prepare-an-extension-for-store#metadata-and-configuration).
+- [ ] Review the final icon in light/dark themes and replace obsolete Store screenshots. Verify linked media and relative documentation links from the final destination checkout.
+- [x] Add the new changelog entry using `## [Title] - {PR_MERGE_DATE}` and verify byte-for-byte that all five existing dated entries are unchanged. Preserve prior contributors' changes. [Version history](https://developers.raycast.com/basics/prepare-an-extension-for-store#version-history).
+- [x] Run the current candidate's automated checks and full Store lint: 329 tests, TypeScript, lint and seven-command distribution build passed.
+- [ ] Complete user testing of the final distribution in Raycast and capture current UI. Local installation/code equality is verified; the project update guide requires user testing before publish. Hosted CI is a separate check once a PR exists.
+- [x] Review the current [extension guidelines](https://manual.raycast.com/extensions-guidelines) and official PR template on September 24: update the existing extension, document usable setup, and retain the live checklist.
+- [ ] Attach current command media to the prepared [PR body](STORE_PR_BODY.en.md). The three added commands require a screencast or suitable screenshots under the official template.
+- [ ] Create or update the authorized PR with accurate draft/readiness status. Do not mark it ready for review while the compatible companion is unavailable. After review and merge, verify the live Store listing and install path against the submitted candidate.
 
-Candidate validation commands, for the future authorized validation pass, are shown below. The repository documents Node.js 22.22.2 or later. No commands in this block were run while drafting this file.
+Candidate validation commands are below. The repository documents Node.js 22.22.2 or later. The September 24 candidate results above are the current automated run. Do not rerun the entire suite for documentation-only changes; recheck relevant validation after code, dependencies, or payload contents change.
 
 ```sh
 npm ci --no-audit --no-fund
@@ -117,4 +139,9 @@ npm run lint
 npm run build
 ```
 
-`npm run publish` is a submission action: Raycast authenticates with GitHub and opens or updates a PR in `raycast/extensions`. Acceptance and merge trigger Store publication. It can squash local commits; review the chosen submission path and current destination before executing it. This draft stops before that action. [Publish an extension](https://developers.raycast.com/basics/publish-an-extension).
+`npm run publish` is a submission action: Raycast authenticates with GitHub and opens or updates a PR in `raycast/extensions`. Acceptance and merge trigger Store publication. The publish tool can squash the contribution it sends to GitHub; preserve the development checkout and its commits, and use the isolated submission checkout. Confirm the final diff contains the retained published changelog and no unrelated changes before invoking it. Authentication and synchronization alone are not submission. [Publish an extension](https://developers.raycast.com/basics/publish-an-extension).
+
+
+### Publishing payload
+
+Do not run `publish` from the full author checkout. API 2.4.1 recursively copies the current directory into its submission cache; `.agent/`, `dist/`, and `docs/` are not in its hard-coded copy exclusions. Git ignores normally prevent untracked local evidence from being staged, but tracked internal documents and harness files would still enter the public PR. Use the separately prepared allowlisted payload; preserve all author history and evidence in this checkout. Inspect its file manifest and resulting PR diff before submission. Screenshots and companion setup still need to be finalized before publishing.

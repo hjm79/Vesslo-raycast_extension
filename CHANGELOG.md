@@ -1,61 +1,26 @@
 # Vesslo Changelog
 
-## Compact Lists and Request Results — Unreleased
+## [App Review and Verified Homebrew Requests] - {PR_MERGE_DATE}
 
-- Replace repeated update/source pills with compact text and icons; retain warning reasons and exact-target review rules.
-- Shorten check and selection summaries, keeping complete check reasons in View Check Details.
-- Show compact receipt headings and target/version/path/results before technical metadata.
-- Add View Technical Details with request and receipt JSON copying; keep cached, expired, pending and mixed results explicit.
-- Use short request-list times and fix singular request counts.
-- Validate 329 regression tests and the seven-command build. See [native UI validation](docs/UI_COMPACT_2026-09-13.md) for installation and interaction evidence.
+### Added
 
-## Target Readiness and Receipt Integration — Unreleased
-
-- Consume schema 3 exports and require current Homebrew evidence for each exact target while keeping global source failures visible.
-- Send request schema 2 with target evidence IDs and read receipt schema 2 without promoting legacy, cached, or expired records to current authority.
-- Preserve selected-target identity, request-specific verification, and source/expiry revalidation through review and receipt follow-up.
-- Verify the local seven-command extension and one installed-app Homebrew update with matching native UI, receipt, bundle, and Homebrew metadata.
-- Commit the existing integration as `435cb7c`; public release and Store publication remain separate.
-
-## Schema 2 App Integration — Unreleased
-
-- Read the app's schema 2 export with session/revision/check-completion validation; legacy exports stay browse-only.
-- Restore selected Homebrew review requests for 1–16 exact targets and use the same flow for individual Homebrew rows.
-- Add Homebrew Requests for authoritative receipt phases and per-target results, including explicit cached, expired, and earlier-session history.
-- Block Homebrew installer and mismatched-source fallbacks through generic update URLs; compare source sets after asynchronous reads.
-- Import app contract fixtures with provenance and extend automated UI fixtures to seven commands and sixteen scenarios.
-- These changes are local and unpublished. Installed app UI, TCC, Installer, and restart validation remain separate.
-
-
-## Earlier Extension Safety and Six-Command Work
-
-This section records the preceding patch stage. Its pending schema/batch/receipt work is superseded by the Schema 2 App Integration entry above.
-
-- Add read-only Deleted Apps for existing `isDeleted` records, with identity/path copying and no app-open, Finder, restore, or update action. Deletion dates/reasons and verification activity are not invented.
-- Add independent All Apps / Update Candidates filtering to Review Apps, with category and text filtering and review-first details.
-- Add update source / Needs Review filters, sorting actions, version/source/identity details, and separate shown, visible, and declared counts.
-- Explain Name, Bundle ID, Developer, Tag, and Memo search matches in text, and open exact tag matches through native push/back navigation.
-- Add Reload Vesslo Data (`⌘R`) across all six commands. It rereads the export; it does not start an app update check. Completed-check time remains explicitly unavailable without producer data.
-- Gate update handoff on consistent exported counts and visibility. Keep missing or incomplete count contracts reviewable with a visible warning.
-- Use typed known action/eligibility values and conservative unknown handling, native installed-app file icons, bounded warning text, explicit UTC dates, and consistent source/count labels.
-- Add matching Homebrew review-list copying and detailed inspection while preserving existing individual app actions. Selected-target batch submission still requires an app-owned interface.
-- Check dependency declarations with `skipLibCheck: false`, repair compatible Node/React type packages, and add locked-install macOS CI for type checking, source lint, tests, and distribution build.
-- Extend regression tests and isolated synthetic UI fixtures for all six commands. See [the completion report](docs/COMPLETION_2026-09-10.md) for validation and [the app handoff prompt](docs/VESSLO_APP_HANDOFF_PROMPT.ko.md) for unresolved producer/receiver work.
-- This is an unpublished extension patch. App-contract completion, hosted CI, Store screenshots, and publication remain separate work.
-
-## [Harden Consumer State and Action Policy] - {PR_MERGE_DATE}
-
-### Fixed
-
-- Preserve current update visibility when an older version was skipped.
-- Distinguish stale, missing, malformed, and permission-denied exports and revalidate actions before handoff.
-- Preserve deleted history while excluding it from normal search and tag counts.
+- Add Review Apps with independent finding-category and update-candidate filters.
+- Add Deleted Apps to search retained records without restoring or launching removed apps.
+- Add Homebrew Requests with per-target results, compact summaries, and separate technical details.
 
 ### Improved
 
-- Share explicit update/review policy across all commands and remove direct Homebrew, mas, and Terminal execution.
-- Keep Homebrew batch operations review only until Vesslo supports scoped handoff.
-- Add consumer, asynchronous file-state, action, and command-render regression tests.
+- Search app names, Bundle IDs, developers, tags, and memos with field selection and matching context.
+- Filter and sort update candidates while keeping source, version, and completed-check information visible.
+- Select up to 16 exact Homebrew installations for confirmation in a compatible Vesslo app, with request-specific receipts.
+- Use compact list accessories and smaller receipt headings.
+
+### Fixed
+
+- Remove direct Homebrew, mas, and Terminal execution from the extension.
+- Revalidate identities, paths, versions, source evidence, and data freshness before handing off actions.
+- Keep missing, stale, unsupported, and inconsistent exports reviewable without authorizing updates.
+- Preserve current update visibility when only an older target version was skipped.
 
 ## [Show Vesslo Review Warnings] - 2026-07-14
 

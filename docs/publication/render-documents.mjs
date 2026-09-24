@@ -8,8 +8,8 @@ const { marked } = await import(pathToFileURL(require.resolve("marked")).href);
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const repository = path.resolve(directory, "../..");
 const documents = [
-  { file: "VESSLO_RAYCAST_INTRO.ko", lang: "ko", title: "Vesslo Raycast 익스텐션 소개", kind: "스크린샷으로 보는 기능과 사용 흐름" },
-  { file: "RAYCAST_SUBMISSION.en", lang: "en", title: "Vesslo — Raycast Store Submission Draft", kind: "Store copy · Reviewer notes · Submission checklist" },
+  { file: "VESSLO_RAYCAST_INTRO.ko", date: "2026.09.13", lang: "ko", title: "Vesslo Raycast 익스텐션 소개", kind: "스크린샷으로 보는 기능과 사용 흐름" },
+  { file: "RAYCAST_SUBMISSION.en", date: "2026.09.24", lang: "en", title: "Vesslo — Raycast Store Submission Draft", kind: "Store copy · Reviewer notes · Submission checklist" },
 ];
 
 function imageData(file) {
@@ -37,7 +37,7 @@ for (const document of documents) {
     if (!file.startsWith(path.join(repository, "media") + path.sep)) throw new Error(`Unexpected image: ${src}`);
     return `<img src="${imageData(file)}"`;
   });
-  const html = `<!doctype html><html lang="${document.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${document.title}</title><style>${css}</style></head><body><header class="topbar"><div class="brand"><img src="${logo}" alt="Vesslo">VESSLO / RAYCAST</div><nav class="links"><a href="VESSLO_RAYCAST_INTRO.ko.html">한국어 소개 글</a><a href="RAYCAST_SUBMISSION.en.html">Review preparation</a></nav></header><main class="${document.lang === "en" ? "review" : "introduction"}"><p class="eyebrow">${document.kind} · 2026.09.13</p><article>${content}</article></main><footer>Prepared from the local Vesslo Raycast extension. This document does not publish or submit the extension. Images are embedded for offline reading.</footer></body></html>`;
+  const html = `<!doctype html><html lang="${document.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${document.title}</title><style>${css}</style></head><body><header class="topbar"><div class="brand"><img src="${logo}" alt="Vesslo">VESSLO / RAYCAST</div><nav class="links"><a href="VESSLO_RAYCAST_INTRO.ko.html">한국어 소개 글</a><a href="RAYCAST_SUBMISSION.en.html">Review preparation</a></nav></header><main class="${document.lang === "en" ? "review" : "introduction"}"><p class="eyebrow">${document.kind} · ${document.date}</p><article>${content}</article></main><footer>Prepared from the local Vesslo Raycast extension. This document does not publish or submit the extension. Images are embedded for offline reading.</footer></body></html>`;
   fs.writeFileSync(path.join(directory, `${document.file}.html`), html);
   console.log(`Rendered ${document.file}.html (${Buffer.byteLength(html)} bytes)`);
 }
