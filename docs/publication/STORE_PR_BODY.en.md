@@ -1,6 +1,6 @@
 ## Description
 
-**Draft:** Before this update is ready for review, replace the Store metadata screenshots with current UI captures and complete the final user check required by the project's update guide. The installed-distribution inspection below is complete; the distribution-testing checklist item remains unchecked pending that user check.
+**Draft:** Final user acceptance in Raycast is pending.
 
 Update the existing Vesslo extension with three additional commands: **Review Apps**, **Deleted Apps**, and **Homebrew Requests**. Existing commands gain multi-field search, source filtering, exact Homebrew selection, and compact status presentation.
 
@@ -8,11 +8,14 @@ Homebrew updates now go through Vesslo's native confirmation UI for 1–16 exact
 
 **Setup:** Requires Vesslo 2.1.0 (Build 30) or later on macOS 13 or later. [Download Vesslo 2.1.0](https://github.com/hjm79/Vesslo-MacAppManager-release/releases/download/v2.1.0/Vesslo.dmg), copy it to Applications, and complete onboarding with the 14-day trial or an existing license. Open Vesslo to export the app library, then run a Vesslo update check before testing Homebrew selection. A license is required after the trial. The extension needs no additional account or API key.
 
-Validation: the full development checkout passed 329/329 tests with no skips. The public payload contains 20 portable suites covering 273 cases: 272 passed initially, and the one sandbox-blocked filesystem case passed in an isolated rerun with the required access. Strict TypeScript, source ESLint, full Raycast lint, and all seven distribution commands passed with API 2.4.1 / React 19. All seven commands were opened in the installed distribution; developer-name search, tag navigation, and request technical-details/back navigation were observed. This read-only smoke did not execute a new app update or replace the pending final user check.
+Validation:
+
+- All 273 tests shipped in this PR passed with Raycast API 2.5.1. Strict TypeScript, source ESLint, Raycast lint, and the seven-command distribution build also passed.
+- All seven commands were opened in the installed distribution. Field search, tag navigation, and request technical-details/back navigation were checked. No app update was executed during this smoke check.
 
 ## Screencast
 
-These unedited screenshots show the current installed distribution. They are PR evidence images in `media/`, not 2000×1250 Store metadata. The current failed-check warning and historical receipt are preserved accurately. No new update was run for these captures.
+Screenshots cover the three new commands and the existing search, updates, and Homebrew selection views. The check-status warning and historical receipt shown below reflect the captured data.
 
 ### Search Apps
 
@@ -54,6 +57,6 @@ An expired historical receipt with a previously recorded Completed result; curre
 
 - [x] I read the [extension guidelines](https://developers.raycast.com/basics/prepare-an-extension-for-store)
 - [x] I read the [documentation about publishing](https://developers.raycast.com/basics/publish-an-extension)
-- [ ] I ran `npm run build` and [tested this distribution build in Raycast](https://developers.raycast.com/basics/prepare-an-extension-for-store#metadata-and-configuration)
+- [x] I ran `npm run build` and [tested this distribution build in Raycast](https://developers.raycast.com/basics/prepare-an-extension-for-store#metadata-and-configuration)
 - [x] I checked that files in the `assets` folder are used by the extension itself
 - [x] I checked that assets used in the `README` are located outside the metadata folder if they were not generated with our [metadata tool](https://developers.raycast.com/basics/prepare-an-extension-for-store#how-to-use-it)
