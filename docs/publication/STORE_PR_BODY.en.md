@@ -15,41 +15,41 @@ Validation:
 
 ## Screencast
 
-Screenshots cover the three new commands and the existing search, updates, and Homebrew selection views. The check-status warning and historical receipt shown below reflect the captured data.
+The author captured these six 2000×1250 PNG screenshots on September 26, 2026. They show the three new commands alongside search, updates, and Homebrew candidates. The screenshots retain the actual failed-check and expired-history states.
 
 ### Search Apps
 
-![Search Apps](https://raw.githubusercontent.com/hjm79/raycast-extensions/85e2f179d74cc58b3f50ce290d07d7cbd29bce5c/extensions/vesslo/media/vesslo-search-apps-20260924.jpg)
+![Search Apps](https://raw.githubusercontent.com/hjm79/raycast-extensions/7b68bd64ce8a990566c1d90f3f9b57f6be47f047/extensions/vesslo/metadata/search_apps.png)
 
-Developer-name search in the current read-only snapshot.
+Search for Microsoft in a review-only snapshot; the visible check-status warning still applies.
 
 ### View Updates
 
-![View Updates](https://raw.githubusercontent.com/hjm79/raycast-extensions/85e2f179d74cc58b3f50ce290d07d7cbd29bce5c/extensions/vesslo/media/vesslo-view-updates-20260924.jpg)
+![View Updates](https://raw.githubusercontent.com/hjm79/raycast-extensions/7b68bd64ce8a990566c1d90f3f9b57f6be47f047/extensions/vesslo/metadata/view_updates.png)
 
-The current export reports a failed full check; all 90 exported candidates remain reviewable.
+Current and available versions for 90 exported update candidates, grouped by source.
 
 ### Bulk Homebrew Update
 
-![Bulk Homebrew Update](https://raw.githubusercontent.com/hjm79/raycast-extensions/85e2f179d74cc58b3f50ce290d07d7cbd29bce5c/extensions/vesslo/media/vesslo-bulk-homebrew-update-20260924.jpg)
+![Bulk Homebrew Update](https://raw.githubusercontent.com/hjm79/raycast-extensions/7b68bd64ce8a990566c1d90f3f9b57f6be47f047/extensions/vesslo/metadata/bulk_homebrew_update.png)
 
-54 candidates, zero selected; this snapshot is review-only and does not demonstrate an executable handoff.
+Homebrew candidates before selection. This snapshot is review-only because its full update check failed.
 
 ### Review Apps
 
-![Review Apps](https://raw.githubusercontent.com/hjm79/raycast-extensions/85e2f179d74cc58b3f50ce290d07d7cbd29bce5c/extensions/vesslo/media/vesslo-review-apps-20260924.jpg)
+![Review Apps](https://raw.githubusercontent.com/hjm79/raycast-extensions/7b68bd64ce8a990566c1d90f3f9b57f6be47f047/extensions/vesslo/metadata/review_apps.png)
 
-A management finding and app identity details. No update runs from this review screen.
+The management review for calibre, with its finding, versions, source, and app identity.
 
 ### Deleted Apps
 
-![Deleted Apps](https://raw.githubusercontent.com/hjm79/raycast-extensions/85e2f179d74cc58b3f50ce290d07d7cbd29bce5c/extensions/vesslo/media/vesslo-deleted-apps-20260924.jpg)
+![Deleted Apps](https://raw.githubusercontent.com/hjm79/raycast-extensions/7b68bd64ce8a990566c1d90f3f9b57f6be47f047/extensions/vesslo/metadata/deleted_apps.png)
 
-Read-only Firefox history. The recorded path and version do not represent a currently installed app.
+Read-only Butterfly Collection history. The recorded path and version do not establish a currently installed app.
 
 ### Homebrew Requests
 
-![Homebrew Requests](https://raw.githubusercontent.com/hjm79/raycast-extensions/85e2f179d74cc58b3f50ce290d07d7cbd29bce5c/extensions/vesslo/media/vesslo-homebrew-requests-20260924.jpg)
+![Homebrew Requests](https://raw.githubusercontent.com/hjm79/raycast-extensions/7b68bd64ce8a990566c1d90f3f9b57f6be47f047/extensions/vesslo/metadata/homebrew_requests.png)
 
 An expired historical receipt with a previously recorded Completed result; current installation is unconfirmed.
 
