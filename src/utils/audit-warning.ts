@@ -2,8 +2,9 @@ import { Color, Icon, List } from "@raycast/api";
 import { VessloApp } from "../types";
 import {
   activeManagementReasons,
+  hasConfirmedSecurityReason,
   isActiveUpdateHealth,
-  REASON_LABELS,
+  reasonLabel,
 } from "./audit-review";
 import {
   displayText,
@@ -13,12 +14,6 @@ import {
 } from "./display-format";
 
 const MAX_REASONS = 20;
-
-function reasonLabel(reason: string): string {
-  return Object.prototype.hasOwnProperty.call(REASON_LABELS, reason)
-    ? REASON_LABELS[reason]
-    : reason;
-}
 
 function reasonList(reasons: string[]): string {
   return displayText(
@@ -85,12 +80,11 @@ export function auditWarningAccessory(
           : "Review",
     icon: {
       source: Icon.Warning,
-      tintColor:
-        app.securityReasons.length > 0
-          ? Color.Red
-          : isActiveUpdateHealth(app) || policyReviewReason
-            ? Color.Orange
-            : Color.SecondaryText,
+      tintColor: hasConfirmedSecurityReason(app)
+        ? Color.Red
+        : isActiveUpdateHealth(app) || policyReviewReason
+          ? Color.Orange
+          : Color.SecondaryText,
     },
     tooltip: explanations.join("\n"),
   };

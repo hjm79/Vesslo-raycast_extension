@@ -60,7 +60,9 @@ test("Raycast link-shaped reasons are code literals without entities or stray es
     { ...fixture, securityReasons: [reason] },
     "review",
   );
-  assert.ok(detail.includes(markdownText(reason)));
+  // Unknown reason codes are never echoed; the generic label replaces them.
+  assert.ok(detail.includes(markdownText("Other Vesslo review item")));
+  assert.equal(detail.includes("example.invalid"), false);
   assert.equal(codeSpanText(markdownText(reason)), reason);
   assert.equal(detail.includes("\\]\\("), false);
 });
@@ -181,7 +183,8 @@ test("audit reasons and source identity are escaped, bounded and safe for protot
   const detail = auditReviewMarkdown(app);
   assert.equal(detail.includes("\n# Heading"), false);
   assert.equal(detail.includes("\u202E"), false);
-  assert.ok(detail.includes(markdownText(app.securityReasons[1], 360)));
+  assert.ok(detail.includes(markdownText("Other Vesslo review item", 360)));
+  assert.equal(detail.includes("vesslo://update/all"), false);
   assert.ok(detail.includes("11 additional reasons"));
   assert.ok(detail.includes("Unknown (invalid date)"));
   assert.ok(detail.length < 13000);
