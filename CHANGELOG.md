@@ -6,7 +6,7 @@
 - Open an app in Vesslo or show it in Finder directly from View App Details, now available with `⌘⇧I`.
 - Add Selected Only to Bulk Homebrew Update, preserving selected targets when searching or switching filters.
 - Filter Homebrew Requests by recorded status and keep earlier-session, expired, and cached results identified as history.
-- Name every Vesslo review reason, including Intel-only and not-recently-used apps, and show a generic label for reasons added in later Vesslo versions. An unavailable signature check no longer uses the red security alert.
+- Name every Vesslo review reason and show a generic label for reasons added in later Vesslo versions. An unavailable signature check no longer uses the red security alert.
 - Update the Raycast API to 2.13.1.
 
 ## [App Review and Verified Homebrew Requests] - 2026-09-26
