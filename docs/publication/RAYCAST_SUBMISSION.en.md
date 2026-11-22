@@ -1,5 +1,7 @@
 # Vesslo — Raycast Store Submission
 
+> **Status on November 22, 2026: merged and published.** [PR #31475](https://github.com/raycast/extensions/pull/31475) was merged on September 26, 2026 at 04:45 UTC as squash commit `3a901964`. The [Store listing](https://www.raycast.com/hjm79/vesslo) shows the update. The published `src` tree (`3f9e724`) equals this branch's `src` at `96bcbd0` and the payload commit `41ca842`. The Raycast bot's last PR commit (`c82c6efd`, "Update CHANGELOG.md and optimise images") recompressed the six screenshots, so the public PNG blobs differ from the local originals in `41ca842`; the names and content are the same captures. Text below that describes the PR as awaiting review is the September 26 record, kept as history.
+
 Updated on September 26, 2026. The submission checkout is based on merge `23859961f723bd5bcea1a219fba22c40fc82eb7c`, which brings the current Store contribution into the existing extension work. The September 13 documentation baseline remains in commit `eb68461`.
 
 This prepares an update to the existing [Vesslo Store extension](https://www.raycast.com/hjm79/vesslo). The author has authorized the update submission and completed the official GitHub authentication. Upstream synchronization, submission, and the September 26 screenshot replacement are complete. After the author explicitly instructed “전환 진행” (proceed with the transition), [PR #31475](https://github.com/raycast/extensions/pull/31475) was marked ready for review. Its confirmed head is `7b68bd64ce8a990566c1d90f3f9b57f6be47f047`, `isDraft` is `false`, and `reviewDecision` is `REVIEW_REQUIRED`. Readiness does not establish human approval, merge, or Store publication.
@@ -92,6 +94,12 @@ Allow Homebrew readiness to expire without starting another check, then inspect 
 | [Latest preflight-denial addendum](../UI_COMPACT_2026-09-13.md#addendum-local-app-applied-observed-preflight-denial) | Standalone probe observed initial `-1743`; Vesslo Test recovery UI replay passed 1/1 with zero skips/failures. | `denialSequenceVerified=false`; does not prove the fresh three-step denial sequence, installed Vesslo/`mas` TCC chain, or App Management denial. |
 | Local metadata inspection on September 13 | `assets/extension-icon.png` measures 512×512; existing six `metadata/vesslo-*.png` files each measure 2000×1250. | Dimensions alone do not approve their content or establish correspondence with the final compact UI. |
 
+### November 22 status check
+
+- `gh pr view 31475 --repo raycast/extensions` reports `MERGED`, `mergedAt 2026-09-26T04:45:39Z`. The earlier July update, [PR #29440](https://github.com/raycast/extensions/pull/29440), reports `MERGED`, `mergedAt 2026-07-14T13:38:45Z`.
+- The public `extensions/vesslo/src` tree hash `3f9e724c16021e3fab0585ae36c8395372641bb8` matches local commits `96bcbd0` and `41ca842`. Nothing in the published source is missing from local history.
+- The October 2 UI work (app details, selected Homebrew candidate filter, request status filter, API 2.6.1) is not in the published extension. It is committed only locally as `raycast/ui-enhancements-20261002`. See [UI_ENHANCEMENTS_2026-10-02.md](../UI_ENHANCEMENTS_2026-10-02.md) and [HANDOFF_2026-11-22.ko.md](../HANDOFF_2026-11-22.ko.md).
+
 ### September 26 screenshot replacement and review readiness
 
 - The author supplied six new 2000×1250 PNG captures and explicitly requested replacement of the previous screenshots. This supersedes the September 25 instruction to retain the old images; the earlier entries below remain historical records.
@@ -152,7 +160,7 @@ The September 25 decision to retain images is superseded by the author's Septemb
 - [x] Post the six September 26 metadata images through the existing PR and [PR body](STORE_PR_BODY.en.md), removing the six prior Store images and six September 24 PR JPEGs from the payload. All new image URLs are pinned to `7b68bd64ce8a990566c1d90f3f9b57f6be47f047`; original blob equality and live 2000×1250 loading are verified.
 - [x] Create the authorized [Draft PR #31475](https://github.com/raycast/extensions/pull/31475), attach the accurate description and screenshots, and disclose the remaining readiness items.
 - [x] Mark PR #31475 ready for review after the author's explicit transition instruction. The successful command and live `isDraft: false` state are confirmed.
-- [ ] Complete remaining automated checks and reviewer feedback, then verify the live Store listing and install path after acceptance and merge. `REVIEW_REQUIRED` is not approval.
+- [x] Complete remaining automated checks and reviewer feedback. PR #31475 was merged on September 26, 2026 and the Store listing shows the update (checked November 22). A fresh install from the Store was not repeated.
 
 Candidate validation commands are below. The repository documents Node.js 22.22.2 or later. The September 25 API 2.5.1 results above are the current automated run. Do not rerun the entire suite for documentation-only changes; recheck relevant validation after code, dependencies, or payload contents change.
 

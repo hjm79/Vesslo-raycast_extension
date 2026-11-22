@@ -7,6 +7,7 @@
 - 현재 Mac의 `/Users/hjm/.config/raycast/extensions/vesslo`에 최종 빌드 적용 완료.
 - 공개 Store 배포, 새 PR 제출, Vesslo 본체 변경은 이번 작업에 포함하지 않았다.
 - **워킹 디렉토리에만 수정, 커밋 안 함.**
+- 2026-11-22: 원본 저장소 `vesslo-raycast`의 `raycast/ui-enhancements-20261002` 브랜치에 커밋으로 보존했다(`0649be3`). Store에는 아직 올리지 않았다. [이관 기록](HANDOFF_2026-11-22.ko.md)
 
 ## 사용자에게 보이는 변화
 

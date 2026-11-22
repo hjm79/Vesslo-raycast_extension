@@ -1,5 +1,12 @@
 # Repository delivery and validation
 
+## Moved to the original checkout on 2026-11-22
+
+All Raycast branches and the uncommitted October 2 work now live in the
+original nested repository, `Vesslo/vesslo-raycast`. The independent
+`raycast-*-work` clones described below are no longer where work happens.
+See [HANDOFF_2026-11-22.ko.md](HANDOFF_2026-11-22.ko.md).
+
 ## Ownership observed on 2026-09-10
 
 The implementation in this task lives only in the independent
