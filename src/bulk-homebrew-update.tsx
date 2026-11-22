@@ -176,7 +176,6 @@ export default function BulkHomebrewUpdate() {
       filtering={false}
       searchText={searchText}
       onSearchTextChange={setSearchText}
-      navigationTitle="Bulk Homebrew Update"
       searchBarPlaceholder={
         candidateFilter === "selected"
           ? "Search selected Homebrew candidates…"
