@@ -23,6 +23,7 @@ Search your Vesslo app library, review updates and findings, and follow Homebrew
 | --- | --- |
 | **Search Apps** | Find apps by name, Bundle ID, developer, tag, or memo. Choose a search field, read match context, and open an available app, reveal it in Finder, or inspect it in Vesslo. |
 | **View Updates** | Inspect Vesslo's exported candidates, current and target versions, source filters, sorting, and check status. Use `⌘I` for details. Supported actions open Vesslo or the App Store as indicated. |
+| **Show Updates in Menu Bar** | Show the update count from Vesslo's last completed check in the menu bar, refreshed every 30 minutes, with Homebrew requests still in progress. It shows **Unverified** instead of a number when the export is missing, unreadable, over 24 hours old, or the check is not complete. Reading the export is not an update check; run checks in Vesslo. |
 | **Bulk Homebrew Update** | Select 1–16 eligible Homebrew app installations, use **Selected Only** to inspect or remove selections, and ask Vesslo to confirm them. Selection survives search changes. Vesslo owns execution and verification. |
 | **Browse by Tag** | Browse installed apps under their exact Vesslo tags. Back navigation preserves the previous view. |
 | **Review Apps** | Inspect exported Security, Update Sources, or Management findings. Switch **All Apps / Update Candidates** independently with `⌘⇧U`; use `⌘I` for details. This view does not scan or update apps. |

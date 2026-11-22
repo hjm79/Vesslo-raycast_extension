@@ -27,6 +27,14 @@
       "mode": "view"
     },
     {
+      "name": "menu-bar-updates",
+      "title": "Show Updates in Menu Bar",
+      "subtitle": "Vesslo",
+      "description": "Show the update count from Vesslo's last completed check in the menu bar",
+      "mode": "menu-bar",
+      "interval": "30m"
+    },
+    {
       "name": "bulk-homebrew-update",
       "title": "Bulk Homebrew Update",
       "subtitle": "Vesslo",
