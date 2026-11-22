@@ -8,11 +8,11 @@ Search your Vesslo app library, review updates and findings, and follow Homebrew
 
 [Website](https://vesslo.top/vesslo) · [Vesslo for macOS](https://github.com/hjm79/Vesslo-MacAppManager) · [Raycast Store](https://www.raycast.com/hjm79/vesslo)
 
-> **Requires Vesslo 2.1.0 (Build 30) or later on macOS 13 or later.** [Download Vesslo 2.1.0](https://github.com/hjm79/Vesslo-MacAppManager-release/releases/download/v2.1.0/Vesslo.dmg). Vesslo provides a 14-day trial; a license is required after the trial.
+> **Requires Vesslo 2.1.0 (Build 30) or later on macOS 13 or later.** [Download the latest Vesslo](https://github.com/hjm79/Vesslo-MacAppManager-release/releases/latest). Vesslo provides a 14-day trial; a license is required after the trial.
 
 ## Setup
 
-1. Use macOS 13 or later with Raycast and [Vesslo 2.1.0 (Build 30) or later](https://github.com/hjm79/Vesslo-MacAppManager-release/releases/download/v2.1.0/Vesslo.dmg) installed. Vesslo is a separate paid companion app with a 14-day trial. No additional account, API key, or credential preference is required by this extension.
+1. Use macOS 13 or later with Raycast and [Vesslo 2.1.0 (Build 30) or later](https://github.com/hjm79/Vesslo-MacAppManager-release/releases/latest) installed. Vesslo is a separate paid companion app with a 14-day trial. No additional account, API key, or credential preference is required by this extension.
 2. Open Vesslo and let it load your app library. Vesslo automatically exports the library to `~/Library/Application Support/Vesslo/raycast_data.json`.
 3. Run the desired Vesslo command in Raycast. **Reload Vesslo Data (`⌘R`)** rereads the local export. To check for newer app versions, run an update check in Vesslo itself.
 4. For exact Homebrew review, run an update check in Vesslo before selecting targets in Raycast. Vesslo 2.1.0 (Build 30) provides the required review and receipt integration; each selected target must still have current readiness evidence.
