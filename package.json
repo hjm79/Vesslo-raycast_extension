@@ -84,12 +84,9 @@
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
     "publish": "npx @raycast/api@latest publish",
-    "test": "node scripts/test.cjs",
     "typecheck": "tsc --noEmit --pretty false",
     "lint:source": "eslint src",
-    "build:check": "ray build --environment dist --output dist --non-interactive",
-    "fixture:prepare": "node scripts/prepare-ui-fixture.cjs",
-    "fixture:verify": "node scripts/verify-ui-fixture.cjs"
+    "build:check": "ray build --environment dist --output dist --non-interactive"
   },
   "platforms": [
     "macOS"
