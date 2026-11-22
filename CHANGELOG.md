@@ -2,7 +2,6 @@
 
 ## [Clearer App Details and Request Filters] - {PR_MERGE_DATE}
 
-- Add Show Updates in Menu Bar: the update count from Vesslo's last completed check, refreshed every 30 minutes, with Homebrew requests in progress. A check that completed with some failed update sources shows a marked count such as `92*`; it reads Unverified instead of a count when the check is incomplete or the export is old or unreadable.
 - Organize app versions, sources, and identity fields in native detail metadata while keeping review warnings visible.
 - Open an app in Vesslo or show it in Finder directly from View App Details, now available with `⌘⇧I`.
 - Add Selected Only to Bulk Homebrew Update, preserving selected targets when searching or switching filters.

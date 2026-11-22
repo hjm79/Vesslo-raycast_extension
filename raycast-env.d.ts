@@ -17,8 +17,6 @@ declare namespace Preferences {
   export type SearchApps = ExtensionPreferences & {}
   /** Preferences accessible in the `updates` command */
   export type Updates = ExtensionPreferences & {}
-  /** Preferences accessible in the `menu-bar-updates` command */
-  export type MenuBarUpdates = ExtensionPreferences & {}
   /** Preferences accessible in the `bulk-homebrew-update` command */
   export type BulkHomebrewUpdate = ExtensionPreferences & {}
   /** Preferences accessible in the `browse-by-tag` command */
@@ -36,8 +34,6 @@ declare namespace Arguments {
   export type SearchApps = {}
   /** Arguments passed to the `updates` command */
   export type Updates = {}
-  /** Arguments passed to the `menu-bar-updates` command */
-  export type MenuBarUpdates = {}
   /** Arguments passed to the `bulk-homebrew-update` command */
   export type BulkHomebrewUpdate = {}
   /** Arguments passed to the `browse-by-tag` command */
