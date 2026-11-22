@@ -12,6 +12,12 @@ import { recordIntent } from "./events";
 
 export { ActionPanel, Color, Icon, Detail, useNavigation };
 
+export namespace List {
+  export namespace Item {
+    export type Accessory = NativeList.Item.Accessory;
+  }
+}
+
 function CopyToClipboard(props: { title: string; content: string }) {
   return createElement(NativeAction, {
     title: props.title,

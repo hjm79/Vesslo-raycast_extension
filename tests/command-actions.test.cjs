@@ -18,10 +18,18 @@ let initialStates = [];
 let stateIndex = 0;
 let stateChanges = [];
 let refreshCount = 0;
+function metadataComponent(name) {
+  return Object.assign((props) => React.createElement(name, props), {
+    Label: `${name}.Label`,
+    Separator: `${name}.Separator`,
+  });
+}
 const api = {
   Icon: new Proxy({}, { get: (_, key) => key }),
   Color: new Proxy({}, { get: (_, key) => key }),
-  Detail: "Detail",
+  Detail: Object.assign((props) => React.createElement("Detail", props), {
+    Metadata: metadataComponent("Detail.Metadata"),
+  }),
   List: Object.assign("List", {}),
 };
 api.List = Object.assign((props) => React.createElement("List", props), {
@@ -34,7 +42,12 @@ api.List = Object.assign((props) => React.createElement("List", props), {
 });
 api.List.Item = Object.assign(
   (props) => React.createElement("List.Item", props),
-  { Detail: "List.Item.Detail" },
+  {
+    Detail: Object.assign(
+      (props) => React.createElement("List.Item.Detail", props),
+      { Metadata: metadataComponent("List.Item.Detail.Metadata") },
+    ),
+  },
 );
 api.Action = Object.assign((props) => React.createElement("Action", props), {
   Push: "Action.Push",
@@ -164,7 +177,7 @@ function collect(node, type, output = [], followPushTargets = true) {
     node.props.target?.type?.name === "TaggedApps"
   )
     collect(node.props.target, type, output, followPushTargets);
-  if (node.type === "List.Item")
+  if (node.type === "List.Item" || node.type === "List.EmptyView")
     collect(node.props.actions, type, output, followPushTargets);
   if (node.type === "List")
     collect(node.props.searchBarAccessory, type, output, followPushTargets);
@@ -621,20 +634,33 @@ test("bulk summary only advertises confirmation for a valid selection or current
 
     currentState = readinessFixture();
     initialStates = ["no matching target"];
-    assert.equal(renderSummary().accessories[0].text, "Review only");
+    stateIndex = 0;
+    let empty = collect(Command(), "List.EmptyView")[0];
+    assert.equal(empty.title, "No Matching Homebrew Candidates");
+    assert.ok(
+      !collect(empty.actions, "Action.Push").some((action) =>
+        action.title.startsWith("Review "),
+      ),
+    );
     const originalData = currentState.data;
     initialStates = [
       "no matching target",
       false,
       { data: originalData, apps: [originalData.apps[0]] },
     ];
-    assert.equal(renderSummary().accessories[0].text, "Review in Vesslo");
-    Date.now = () => Date.parse(originalData.homebrewReadiness[0].expiresAt);
-    summary = renderSummary();
-    assert.equal(currentState.data, originalData);
-    assert.equal(summary.accessories[0].text, "Review only");
+    stateIndex = 0;
+    empty = collect(Command(), "List.EmptyView")[0];
     assert.ok(
-      !collect(summary.actions, "Action.Push").some(
+      collect(empty.actions, "Action.Push").some(
+        (action) => action.title === "Review 1 app in Vesslo",
+      ),
+    );
+    Date.now = () => Date.parse(originalData.homebrewReadiness[0].expiresAt);
+    stateIndex = 0;
+    empty = collect(Command(), "List.EmptyView")[0];
+    assert.equal(currentState.data, originalData);
+    assert.ok(
+      !collect(empty.actions, "Action.Push").some(
         (action) => action.title === "Review 1 app in Vesslo",
       ),
     );
@@ -683,8 +709,12 @@ test("compact app rows retain security and update meaning without repeated statu
     bulkRow.accessories.filter((item) => item.text === "Security").length,
     1,
   );
+  const sourceMetadata = collect(
+    bulkRow.detail.props.metadata,
+    "List.Item.Detail.Metadata.Label",
+  ).find((label) => label.title === "Sources");
   for (const source of ["Homebrew", "Sparkle"])
-    assert.ok(bulkRow.detail.props.markdown.includes(source), source);
+    assert.ok(sourceMetadata.text.includes(source), source);
 
   currentState.status = "stale";
   const staleRow = rowFor(commands[0][1]);
@@ -712,7 +742,13 @@ test("candidate totals stay distinct from currently checked Homebrew targets", (
   const candidates = collect(tree, "List.Section").find(
     (section) => section.title === "Homebrew candidates",
   );
-  assert.equal(candidates.subtitle, "2 apps");
+  assert.equal(candidates.subtitle, "2 of 2 apps shown");
+  assert.match(
+    collect(tree, "List.Section").find(
+      (section) => section.title === "Homebrew Review",
+    ).subtitle,
+    /2 candidates · 0 selected · 2 shown/,
+  );
   stateIndex = 0;
 });
 
@@ -795,11 +831,10 @@ test("an empty Homebrew candidate list stays review-only without selectable or e
   initialStates = [];
   stateIndex = 0;
   const tree = commands[3][1]();
-  const rows = collect(tree, "List.Item");
-  const summary = rows.find((row) => row.id === "vesslo-homebrew-review");
-  assert.equal(summary.title, "0 selected");
-  assert.equal(summary.accessories[0].text, "Review only");
-  assert.ok(rows.some((row) => row.id === "vesslo-homebrew-empty"));
+  const empty = collect(tree, "List.EmptyView")[0];
+  assert.equal(empty.title, "No Homebrew Candidates in This Export");
+  assert.match(empty.description, /0 candidates · 0 selected · 0 shown/);
+  assert.equal(collect(tree, "List.Item").length, 0);
   assert.equal(
     collect(tree, "AnyAction").some((action) =>
       /Select Matching|Review \d+ apps? in Vesslo|Update All|Install/.test(

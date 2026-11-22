@@ -172,6 +172,15 @@ test("fixture native boundary rejects external APIs and persisted dropdowns", ()
   }
   assert.throws(() => api.List.Dropdown({ storeValue: true }), /persistence/);
   assert.doesNotThrow(() => api.List.Dropdown({ storeValue: false }));
+  for (const metadata of [api.Detail.Metadata, api.List.Item.Detail.Metadata]) {
+    assert.doesNotThrow(() =>
+      metadata.Label({
+        title: "App path",
+        text: "/__vesslo_fixture__/app.app",
+      }),
+    );
+    assert.throws(() => metadata.Link, /Forbidden native API/);
+  }
   assert.throws(
     () =>
       api.List.Item.Detail({ markdown: "[remote](https://example.invalid)" }),

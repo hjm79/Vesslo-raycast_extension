@@ -54,6 +54,7 @@ const SOURCES = [
   "types.ts",
   "constants.ts",
   "components/SharedAppListItem.tsx",
+  "components/AppDetail.tsx",
   "components/AppActions.tsx",
   "components/DataStateNotice.tsx",
   "components/HomebrewRequestReview.tsx",
@@ -76,6 +77,7 @@ const SOURCES = [
     "handoff-execution",
     "homebrew-readiness",
     "receipt-contract",
+    "receipt-filter",
   ].map((name) => `utils/${name}.ts`),
 ];
 const TEMPLATES = {
@@ -97,6 +99,9 @@ const UI_EXPORTS = new Set([
 ]);
 const UI_MEMBERS = new Set([
   "Detail",
+  "Detail.Metadata",
+  "Detail.Metadata.Label",
+  "Detail.Metadata.Separator",
   "Action",
   "Action.Push",
   "Action.CopyToClipboard",
@@ -106,6 +111,9 @@ const UI_MEMBERS = new Set([
   "List",
   "List.Item",
   "List.Item.Detail",
+  "List.Item.Detail.Metadata",
+  "List.Item.Detail.Metadata.Label",
+  "List.Item.Detail.Metadata.Separator",
   "List.Section",
   "List.EmptyView",
   "List.Dropdown",
@@ -242,7 +250,7 @@ function assertSafeSource(text, relative) {
     if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
       const name = node.tagName.getText(file);
       if (
-        /^(Action|List|ActionPanel)(\.|$)/.test(name) &&
+        /^(Action|List|ActionPanel|Detail)(\.|$)/.test(name) &&
         !UI_MEMBERS.has(name)
       )
         throw new Error(`Unreviewed native UI member ${name}: ${relative}`);

@@ -46,6 +46,9 @@ function createNativeApi() {
   const components = new Map();
   const allowed = new Set([
     "Detail",
+    "Detail.Metadata",
+    "Detail.Metadata.Label",
+    "Detail.Metadata.Separator",
     "Action",
     "Action.Push",
     "ActionPanel",
@@ -54,6 +57,9 @@ function createNativeApi() {
     "List",
     "List.Item",
     "List.Item.Detail",
+    "List.Item.Detail.Metadata",
+    "List.Item.Detail.Metadata.Label",
+    "List.Item.Detail.Metadata.Separator",
     "List.Section",
     "List.EmptyView",
     "List.Dropdown",
@@ -234,6 +240,7 @@ async function exerciseBundle(code, command, scenario) {
         "actions",
         "target",
         "detail",
+        "metadata",
         "searchBarAccessory",
       ]) {
         const child = node.props?.[key];

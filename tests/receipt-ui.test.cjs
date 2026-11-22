@@ -33,6 +33,12 @@ api.ActionPanel = (props) => props.children;
 api.List = Object.assign((props) => React.createElement("List", props), {
   Section: "List.Section",
   EmptyView: "List.EmptyView",
+  Dropdown: Object.assign(
+    (props) => React.createElement("List.Dropdown", props),
+    {
+      Item: "List.Dropdown.Item",
+    },
+  ),
   Item: Object.assign((props) => React.createElement("List.Item", props), {
     Detail: "List.Item.Detail",
   }),

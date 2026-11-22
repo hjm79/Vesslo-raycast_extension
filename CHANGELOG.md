@@ -1,6 +1,13 @@
 # Vesslo Changelog
 
-## [App Review and Verified Homebrew Requests] - {PR_MERGE_DATE}
+## [Clearer App Details and Request Filters] - {PR_MERGE_DATE}
+
+- Organize app versions, sources, and identity fields in native detail metadata while keeping review warnings visible.
+- Add Selected Only to Bulk Homebrew Update, preserving selected targets when searching or switching filters.
+- Filter Homebrew Requests by recorded status and keep earlier-session, expired, and cached results identified as history.
+- Update the Raycast API to 2.6.1.
+
+## [App Review and Verified Homebrew Requests] - 2026-09-26
 
 ### Added
 
