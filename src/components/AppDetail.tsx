@@ -1,5 +1,6 @@
-import { Action, ActionPanel, Detail, List } from "@raycast/api";
+import { Action, ActionPanel, Detail, Icon, List } from "@raycast/api";
 import { VessloApp } from "../types";
+import { openInVesslo, performAppAction } from "../utils/actions";
 import { auditReviewMarkdown } from "../utils/audit-warning";
 import {
   displayText,
@@ -69,9 +70,13 @@ export function appDetailMarkdown(
 export function AppDetail({
   app,
   reviewReason,
+  navigationBundleId = null,
+  canShowInFinder = false,
 }: {
   app: VessloApp;
   reviewReason: string | null;
+  navigationBundleId?: string | null;
+  canShowInFinder?: boolean;
 }) {
   return (
     <Detail
@@ -80,6 +85,20 @@ export function AppDetail({
       metadata={<AppDetailMetadata app={app} />}
       actions={
         <ActionPanel>
+          {!app.isDeleted && (
+            <Action
+              title="Open in Vesslo"
+              icon={Icon.Link}
+              onAction={() => openInVesslo(navigationBundleId)}
+            />
+          )}
+          {!app.isDeleted && canShowInFinder && (
+            <Action
+              title="Show in Finder"
+              icon={Icon.Finder}
+              onAction={() => performAppAction(app, "finder")}
+            />
+          )}
           {app.bundleId && (
             <Action.CopyToClipboard
               title="Copy Bundle ID"

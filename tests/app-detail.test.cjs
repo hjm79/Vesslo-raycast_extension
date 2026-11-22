@@ -24,7 +24,9 @@ const api = {
       Detail: { Metadata: nativeMetadata("List.Item.Detail.Metadata") },
     },
   },
-  Action: { CopyToClipboard: "Action.CopyToClipboard" },
+  Action: nativeComponent("Action", {
+    CopyToClipboard: "Action.CopyToClipboard",
+  }),
   ActionPanel: nativeComponent("ActionPanel"),
 };
 const originalLoad = Module._load;
@@ -125,11 +127,31 @@ test("native detail body keeps policy and all audit warnings visible while metad
   assert.ok(legacy.includes("**Installed version:**"));
 });
 
+test("full app details open Vesslo and reveal accessible installed apps", () => {
+  const detail = AppDetail({
+    app: fixture,
+    reviewReason: null,
+    navigationBundleId: fixture.bundleId,
+    canShowInFinder: true,
+  });
+  assert.deepEqual(
+    collect(detail.props.actions, "Action").map(({ title }) => title),
+    ["Open in Vesslo", "Show in Finder"],
+  );
+  const hidden = AppDetail({ app: fixture, reviewReason: null });
+  assert.deepEqual(
+    collect(hidden.props.actions, "Action").map(({ title }) => title),
+    ["Open in Vesslo"],
+  );
+});
+
 test("full app details expose only identity copying and mark deleted records as historical", () => {
   const app = { ...fixture, isDeleted: true };
   const detail = AppDetail({
     app,
     reviewReason: "The app is a deleted record.",
+    navigationBundleId: app.bundleId,
+    canShowInFinder: true,
   });
   const labels = collect(detail.props.metadata, "Detail.Metadata.Label");
   assert.ok(labels.some((label) => label.title === "Recorded version"));

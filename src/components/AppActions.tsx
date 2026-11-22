@@ -93,7 +93,14 @@ export function AppActions({
         <Action.Push
           title="View App Details"
           icon={Icon.Info}
-          target={<AppDetail app={app} reviewReason={policy.reviewReason} />}
+          target={
+            <AppDetail
+              app={app}
+              reviewReason={policy.reviewReason}
+              navigationBundleId={policy.navigationBundleId}
+              canShowInFinder={policy.canShowInFinder}
+            />
+          }
         />
       </ActionPanel.Section>
       {onRefresh && (
