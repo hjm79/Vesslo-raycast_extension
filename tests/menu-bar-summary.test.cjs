@@ -11,6 +11,7 @@ const {
   rootSearchSubtitle,
   requestLabel,
   UNVERIFIED_TITLE,
+  SOURCE_FAILURE_NOTICE,
 } = require(join(build, "utils/menu-bar-summary.js"));
 
 const directory = join(__dirname, "fixtures/app-integration");
@@ -180,4 +181,80 @@ test("the menu bar command only reads data and refreshes on a long interval", ()
     "Reload",
   ])
     assert.equal(source.includes(forbidden), false, forbidden);
+});
+
+const readinessDirectory = join(__dirname, "fixtures/app-readiness-v2");
+const readinessClock = Date.parse(
+  JSON.parse(readFileSync(join(readinessDirectory, "manifest.json"), "utf8"))
+    .fixtureClock,
+);
+const sourceFailureExport = () =>
+  JSON.parse(
+    readFileSync(
+      join(readinessDirectory, "export-global-failed-ready-one.json"),
+      "utf8",
+    ),
+  );
+
+test("a schema 3 check that only failed some sources shows a marked count", () => {
+  const data = parseVessloData(JSON.stringify(sourceFailureExport()));
+  assert.equal(data.checkPhase, "failed");
+  assert.equal(data.checkReason, "sourceFailure");
+  const summary = summarizeUpdates(readyState(data), readinessClock);
+  assert.equal(summary.verified, true);
+  assert.equal(summary.sourcesFailed, true);
+  assert.equal(summary.count, 3);
+  assert.equal(menuBarTitle(summary), "3*");
+  assert.equal(
+    rootSearchSubtitle(summary),
+    "Vesslo · 3 updates (some sources failed)",
+  );
+  assert.equal(
+    SOURCE_FAILURE_NOTICE,
+    "Some update sources failed in the last Vesslo check",
+  );
+});
+
+test("source failure stays Unverified when another unverified condition also applies", () => {
+  const data = parseVessloData(JSON.stringify(sourceFailureExport()));
+  const old = summarizeUpdates(
+    readyState(data),
+    readinessClock + 25 * 60 * 60 * 1000,
+  );
+  assert.equal(old.verified, false);
+  assert.equal(menuBarTitle(old), UNVERIFIED_TITLE);
+  assert.match(old.reason, /24 hours/);
+  const otherFailure = summarizeUpdates(
+    readyState(
+      parseVessloData(
+        JSON.stringify({
+          ...sourceFailureExport(),
+          checkReason: "checkInterrupted",
+        }),
+      ),
+    ),
+    readinessClock,
+  );
+  assert.equal(otherFailure.verified, false);
+  const mismatched = summarizeUpdates(
+    readyState(
+      parseVessloData(
+        JSON.stringify({
+          ...sourceFailureExport(),
+          completedCheckRevision: 40,
+        }),
+      ),
+    ),
+    readinessClock,
+  );
+  assert.equal(mismatched.verified, false);
+});
+
+test("a fully successful check shows an unmarked count", () => {
+  const summary = summarizeUpdates(
+    readyState(parseVessloData(JSON.stringify(raw("ready.json")))),
+    now,
+  );
+  assert.equal(summary.sourcesFailed, false);
+  assert.equal(menuBarTitle(summary), "2");
 });

@@ -16,6 +16,7 @@ import {
   RequestSummary,
   requestLabel,
   rootSearchSubtitle,
+  SOURCE_FAILURE_NOTICE,
   summarizeRequests,
   summarizeUpdates,
   UpdateSummary,
@@ -103,6 +104,16 @@ export default function MenuBarUpdates() {
           <MenuBarExtra.Item
             icon={Icon.Warning}
             title={displayText(updates.reason, 120)}
+            onAction={() => openInVesslo()}
+          />
+        </MenuBarExtra.Section>
+      )}
+      {updates?.verified && updates.sourcesFailed && (
+        <MenuBarExtra.Section>
+          <MenuBarExtra.Item
+            icon={Icon.Warning}
+            title={SOURCE_FAILURE_NOTICE}
+            tooltip="Counts marked with * may miss updates from the failed sources. Review sources in Vesslo."
             onAction={() => openInVesslo()}
           />
         </MenuBarExtra.Section>
