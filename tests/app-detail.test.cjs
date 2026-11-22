@@ -145,6 +145,19 @@ test("full app details open Vesslo and reveal accessible installed apps", () => 
   );
 });
 
+test("full app details hide path copying when the path is empty", () => {
+  const detail = AppDetail({
+    app: { ...fixture, path: "  " },
+    reviewReason: null,
+  });
+  assert.deepEqual(
+    collect(detail.props.actions, "Action.CopyToClipboard").map(
+      ({ title }) => title,
+    ),
+    ["Copy Bundle ID"],
+  );
+});
+
 test("full app details expose only identity copying and mark deleted records as historical", () => {
   const app = { ...fixture, isDeleted: true };
   const detail = AppDetail({

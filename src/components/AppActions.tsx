@@ -93,6 +93,7 @@ export function AppActions({
         <Action.Push
           title="View App Details"
           icon={Icon.Info}
+          shortcut={{ modifiers: ["cmd", "shift"], key: "i" }}
           target={
             <AppDetail
               app={app}

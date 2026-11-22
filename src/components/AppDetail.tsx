@@ -105,10 +105,12 @@ export function AppDetail({
               content={app.bundleId}
             />
           )}
-          <Action.CopyToClipboard
-            title={app.isDeleted ? "Copy Recorded Path" : "Copy App Path"}
-            content={app.path}
-          />
+          {app.path.trim() && (
+            <Action.CopyToClipboard
+              title={app.isDeleted ? "Copy Recorded Path" : "Copy App Path"}
+              content={app.path}
+            />
+          )}
         </ActionPanel>
       }
     />

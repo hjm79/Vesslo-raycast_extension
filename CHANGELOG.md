@@ -3,7 +3,7 @@
 ## [Clearer App Details and Request Filters] - {PR_MERGE_DATE}
 
 - Organize app versions, sources, and identity fields in native detail metadata while keeping review warnings visible.
-- Open an app in Vesslo or show it in Finder directly from View App Details.
+- Open an app in Vesslo or show it in Finder directly from View App Details, now available with `⌘⇧I`.
 - Add Selected Only to Bulk Homebrew Update, preserving selected targets when searching or switching filters.
 - Filter Homebrew Requests by recorded status and keep earlier-session, expired, and cached results identified as history.
 - Update the Raycast API to 2.13.1.
