@@ -25,7 +25,7 @@ Module._load = originalLoad;
 const fixture = require("./fixtures/current-app.json");
 
 // Copy of Vesslo's AppAuditReason cases (Sources/Vesslo/Core/AppAuditModels.swift,
-// 2026-11-22). Update this list and REASON_LABELS together when Vesslo adds a reason.
+// Vesslo 2.6.0). Update this list and REASON_LABELS together when Vesslo adds a reason.
 const VESSLO_AUDIT_REASONS = [
   "noMemoOrTags",
   "updateAvailable",
@@ -46,6 +46,7 @@ const VESSLO_AUDIT_REASONS = [
   "userConfirmedUpdateEnded",
   "userConfirmedUpdateSupported",
   "intelOnlyApp",
+  "duplicateInstall",
 ];
 
 test("every Vesslo audit reason has a label and no label is left over", () => {
