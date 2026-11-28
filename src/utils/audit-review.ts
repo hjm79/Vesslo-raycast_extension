@@ -17,6 +17,7 @@ export const REASON_LABELS: Readonly<Record<string, string>> = {
   updateAvailable: "Update available",
   unusedApp: "Not used recently",
   intelOnlyApp: "Intel-only app (Rosetta)",
+  duplicateInstall: "Installed in more than one location",
   signatureVerificationUnavailable: "Security verification unavailable",
   userConfirmedUpdateEnded: "Recorded as no longer supported",
   userConfirmedUpdateSupported: "Recorded as still supported",
